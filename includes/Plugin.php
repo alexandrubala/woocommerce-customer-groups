@@ -87,10 +87,6 @@ final class Plugin {
 			return;
 		}
 
-		if ( ! $this->is_vendor_available() ) {
-			add_action( 'admin_notices', array( $this, 'render_composer_notice' ) );
-		}
-
 		$this->container->get( AdminServiceProvider::class )->register();
 		$this->container->get( FrontendServiceProvider::class )->register();
 	}
@@ -124,33 +120,5 @@ final class Plugin {
 		if ( class_exists( \Automattic\WooCommerce\Utilities\FeaturesUtil::class ) ) {
 			\Automattic\WooCommerce\Utilities\FeaturesUtil::declare_compatibility( 'custom_order_tables', WCCG_FILE, true );
 		}
-	}
-
-	/**
-	 * Whether Composer autoload is available.
-	 *
-	 * @return bool
-	 */
-	private function is_vendor_available(): bool {
-		return is_readable( WCCG_PATH . 'vendor/autoload.php' );
-	}
-
-	/**
-	 * Display a notice when Composer dependencies are missing.
-	 *
-	 * @return void
-	 */
-	public function render_composer_notice(): void {
-		if ( ! current_user_can( 'manage_options' ) ) {
-			return;
-		}
-
-		printf(
-			'<div class="notice notice-warning"><p>%s</p></div>',
-			esc_html__(
-				'WooCommerce Customer Groups is running with the fallback autoloader. Run "composer install" in the plugin directory for development tooling.',
-				'woocommerce-customer-groups'
-			)
-		);
 	}
 }
