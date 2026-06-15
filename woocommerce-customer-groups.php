@@ -58,5 +58,5 @@ add_action(
 	static function (): void {
 		WooCommerce\CustomerGroups\Plugin::instance()->init();
 	},
-	10
+	20
 );

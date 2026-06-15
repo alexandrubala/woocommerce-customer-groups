@@ -54,7 +54,7 @@ final class CustomerGroupPostType {
 				'labels'              => $labels,
 				'public'              => false,
 				'show_ui'             => true,
-				'show_in_menu'        => false,
+				'show_in_menu'        => 'woocommerce',
 				'show_in_admin_bar'   => false,
 				'show_in_nav_menus'   => false,
 				'exclude_from_search' => true,
