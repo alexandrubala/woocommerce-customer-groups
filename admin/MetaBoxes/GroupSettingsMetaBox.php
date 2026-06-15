@@ -44,8 +44,27 @@ final class GroupSettingsMetaBox {
 	public function register_hooks(): void {
 		add_action( 'add_meta_boxes', array( $this, 'register_meta_box' ) );
 		add_action( 'save_post_' . WCCG_POST_TYPE, array( $this, 'save_meta_box' ), 10, 2 );
+		add_action( 'save_post_' . WCCG_POST_TYPE, array( $this, 'clear_cache_on_save' ), 99 );
 		add_action( 'deleted_post', array( $this, 'clear_cache_on_delete' ) );
 		add_action( 'trashed_post', array( $this, 'clear_cache_on_delete' ) );
+	}
+
+	/**
+	 * Clear cached groups after any group save so product screens stay in sync.
+	 *
+	 * @param int $post_id Post ID.
+	 * @return void
+	 */
+	public function clear_cache_on_save( int $post_id ): void {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( WCCG_POST_TYPE !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		$this->repository->clear_cache();
 	}
 
 	/**

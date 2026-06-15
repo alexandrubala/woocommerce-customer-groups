@@ -126,29 +126,27 @@ final class ProductVisibilityTab {
 			</div>
 
 			<div class="options_group wccg-allowed-groups-field"<?php echo $is_restricted ? '' : ' style="display:none;"'; ?>>
-				<p class="form-field <?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>_field">
+				<p class="form-field wccg-allowed-groups-form-field <?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>_field">
 					<label><?php esc_html_e( 'Allowed Groups', 'woocommerce-customer-groups' ); ?></label>
-					<?php if ( empty( $groups ) ) : ?>
-						<span class="description">
-							<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?>
-						</span>
-					<?php else : ?>
-						<ul class="wccg-allowed-groups-list">
+					<span class="wccg-allowed-groups-wrap">
+						<?php if ( empty( $groups ) ) : ?>
+							<em class="wccg-no-groups-notice">
+								<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?>
+							</em>
+						<?php else : ?>
 							<?php foreach ( $groups as $group ) : ?>
-								<li>
-									<label>
-										<input
-											type="checkbox"
-											name="<?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>[]"
-											value="<?php echo esc_attr( (string) $group->get_id() ); ?>"
-											<?php checked( in_array( $group->get_id(), $allowed_group_ids, true ) ); ?>
-										/>
-										<?php echo esc_html( $group->get_name() ); ?>
-									</label>
-								</li>
+								<label class="wccg-allowed-group-option">
+									<input
+										type="checkbox"
+										name="<?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>[]"
+										value="<?php echo esc_attr( (string) $group->get_id() ); ?>"
+										<?php checked( in_array( $group->get_id(), $allowed_group_ids, true ) ); ?>
+									/>
+									<?php echo esc_html( $group->get_name() ); ?>
+								</label>
 							<?php endforeach; ?>
-						</ul>
-					<?php endif; ?>
+						<?php endif; ?>
+					</span>
 					<span class="description">
 						<?php esc_html_e( 'Only customers assigned to the selected groups will see this product. Guests and other users will not see it.', 'woocommerce-customer-groups' ); ?>
 					</span>
