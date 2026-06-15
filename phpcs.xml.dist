@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<ruleset name="WooCommerce Customer Groups">
+	<description>WordPress Coding Standards for WooCommerce Customer Groups.</description>
+
+	<file>./woocommerce-customer-groups.php</file>
+	<file>./includes</file>
+	<file>./admin</file>
+	<file>./frontend</file>
+
+	<exclude-pattern>*/vendor/*</exclude-pattern>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
+	</rule>
+
+	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
+		<properties>
+			<prefixes>wccg,WCCG,WooCommerce</prefixes>
+		</properties>
+	</rule>
+
+	<rule ref="PHPCompatibilityWP"/>
+	<config name="testVersion" value="8.0-"/>
+
+	<arg value="sp"/>
+	<arg name="colors"/>
+</ruleset>

@@ -1,0 +1,21 @@
+/**
+ * Admin styles for WooCommerce Customer Groups.
+ */
+
+.wccg-group-settings .regular-text {
+	max-width: 12rem;
+}
+
+.wccg-user-group-field select {
+	min-width: 16rem;
+}
+
+.column-wccg_discount_type,
+.column-wccg_discount_value,
+.column-wccg_users_count {
+	width: 10%;
+}
+
+.column-wccg_customer_group {
+	width: 12%;
+}
