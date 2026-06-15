@@ -126,12 +126,12 @@ final class ProductVisibilityTab {
 			</div>
 
 			<div class="options_group wccg-allowed-groups-field"<?php echo $is_restricted ? '' : ' style="display:none;"'; ?>>
-				<fieldset class="form-field <?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>_field">
-					<legend><?php esc_html_e( 'Allowed Groups', 'woocommerce-customer-groups' ); ?></legend>
+				<p class="form-field <?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>_field">
+					<label><?php esc_html_e( 'Allowed Groups', 'woocommerce-customer-groups' ); ?></label>
 					<?php if ( empty( $groups ) ) : ?>
-						<p class="description">
+						<span class="description">
 							<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?>
-						</p>
+						</span>
 					<?php else : ?>
 						<ul class="wc-checkboxes wccg-allowed-groups-list">
 							<?php foreach ( $groups as $group ) : ?>
@@ -152,7 +152,7 @@ final class ProductVisibilityTab {
 					<span class="description">
 						<?php esc_html_e( 'Only customers assigned to the selected groups will see this product. Guests and other users will not see it.', 'woocommerce-customer-groups' ); ?>
 					</span>
-				</fieldset>
+				</p>
 			</div>
 		</div>
 		<?php

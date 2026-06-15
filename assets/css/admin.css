@@ -41,18 +41,17 @@
 	font-weight: 400;
 }
 
-#wccg_customer_groups_data fieldset.form-field {
-	margin: 0;
-	padding: 5px 20px 5px 162px;
-	border: 0;
+#wccg_customer_groups_data p.form-field > label:first-child {
+	font-weight: 600;
 }
 
-#wccg_customer_groups_data fieldset.form-field legend {
-	float: left;
-	width: 150px;
-	padding: 0;
-	margin: 0 0 0 -150px;
-	font-weight: 600;
+#wccg_customer_groups_data p.form-field > .wc-checkboxes {
+	display: block;
+}
+
+#wccg_customer_groups_data p.form-field > .description {
+	display: block;
+	padding-top: 0.35rem;
 }
 
 .wccg-allowed-shipping-methods-list {
