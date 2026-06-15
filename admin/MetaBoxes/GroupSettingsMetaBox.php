@@ -8,6 +8,7 @@
 namespace WooCommerce\CustomerGroups\Admin\MetaBoxes;
 
 use WooCommerce\CustomerGroups\Helpers\Sanitizer;
+use WooCommerce\CustomerGroups\Helpers\ShippingMethodHelper;
 use WooCommerce\CustomerGroups\Models\CustomerGroup;
 use WooCommerce\CustomerGroups\Repositories\CustomerGroupRepository;
 
@@ -90,6 +91,8 @@ final class GroupSettingsMetaBox {
 		$discount_type  = $group->get_discount_type();
 		$discount_value = $group->get_discount_value();
 		$description    = $group->get_description();
+		$allowed_shipping_methods = $group->get_allowed_shipping_methods();
+		$shipping_methods_by_zone = ShippingMethodHelper::get_methods_by_zone();
 		?>
 		<table class="form-table wccg-group-settings" role="presentation">
 			<tbody>
@@ -146,6 +149,41 @@ final class GroupSettingsMetaBox {
 						</p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">
+						<?php esc_html_e( 'Allowed Shipping Methods', 'woocommerce-customer-groups' ); ?>
+					</th>
+					<td>
+						<?php if ( empty( $shipping_methods_by_zone ) ) : ?>
+							<p class="description">
+								<?php esc_html_e( 'No enabled shipping methods found. Configure shipping zones in WooCommerce first.', 'woocommerce-customer-groups' ); ?>
+							</p>
+						<?php else : ?>
+							<div class="wccg-allowed-shipping-methods-list">
+								<?php foreach ( $shipping_methods_by_zone as $zone_name => $methods ) : ?>
+									<div class="wccg-shipping-zone-group">
+										<strong class="wccg-shipping-zone-name"><?php echo esc_html( $zone_name ); ?></strong>
+										<?php foreach ( $methods as $rate_id => $method_title ) : ?>
+											<label class="wccg-allowed-shipping-method-option">
+												<input
+													type="checkbox"
+													name="wccg_allowed_shipping_methods[]"
+													value="<?php echo esc_attr( $rate_id ); ?>"
+													<?php checked( in_array( $rate_id, $allowed_shipping_methods, true ) ); ?>
+												/>
+												<?php echo esc_html( $method_title ); ?>
+												<code class="wccg-shipping-rate-id"><?php echo esc_html( $rate_id ); ?></code>
+											</label>
+										<?php endforeach; ?>
+									</div>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+						<p class="description">
+							<?php esc_html_e( 'Leave all unchecked to allow every shipping method. Select one or more methods to restrict checkout options for customers in this group.', 'woocommerce-customer-groups' ); ?>
+						</p>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 		<?php
@@ -183,10 +221,21 @@ final class GroupSettingsMetaBox {
 			? Sanitizer::description( wp_unslash( $_POST['wccg_description'] ) )
 			: '';
 
+		$allowed_shipping_methods = isset( $_POST['wccg_allowed_shipping_methods'] )
+			? Sanitizer::allowed_shipping_methods( wp_unslash( $_POST['wccg_allowed_shipping_methods'] ) )
+			: array();
+
+		$valid_rate_ids = ShippingMethodHelper::get_available_rate_ids();
+
+		if ( ! empty( $valid_rate_ids ) ) {
+			$allowed_shipping_methods = array_values( array_intersect( $allowed_shipping_methods, $valid_rate_ids ) );
+		}
+
 		$meta = array(
-			WCCG_META_DISCOUNT_TYPE  => $discount_type,
-			WCCG_META_DISCOUNT_VALUE => $discount_value,
-			WCCG_META_DESCRIPTION    => $description,
+			WCCG_META_DISCOUNT_TYPE             => $discount_type,
+			WCCG_META_DISCOUNT_VALUE            => $discount_value,
+			WCCG_META_DESCRIPTION               => $description,
+			WCCG_META_ALLOWED_SHIPPING_METHODS  => $allowed_shipping_methods,
 		);
 
 		/**
@@ -200,6 +249,7 @@ final class GroupSettingsMetaBox {
 		update_post_meta( $post_id, WCCG_META_DISCOUNT_TYPE, $meta[ WCCG_META_DISCOUNT_TYPE ] );
 		update_post_meta( $post_id, WCCG_META_DISCOUNT_VALUE, $meta[ WCCG_META_DISCOUNT_VALUE ] );
 		update_post_meta( $post_id, WCCG_META_DESCRIPTION, $meta[ WCCG_META_DESCRIPTION ] );
+		update_post_meta( $post_id, WCCG_META_ALLOWED_SHIPPING_METHODS, $meta[ WCCG_META_ALLOWED_SHIPPING_METHODS ] );
 
 		$this->repository->clear_cache();
 

@@ -35,3 +35,28 @@
 .wccg-allowed-groups-list label {
 	font-weight: 400;
 }
+
+.wccg-allowed-shipping-methods-list {
+	margin-top: 0.25rem;
+}
+
+.wccg-shipping-zone-group {
+	margin-bottom: 1rem;
+}
+
+.wccg-shipping-zone-name {
+	display: block;
+	margin-bottom: 0.35rem;
+}
+
+.wccg-allowed-shipping-method-option {
+	display: block;
+	margin: 0.35rem 0;
+	font-weight: 400;
+}
+
+.wccg-shipping-rate-id {
+	margin-left: 0.35rem;
+	color: #646970;
+	font-size: 12px;
+}

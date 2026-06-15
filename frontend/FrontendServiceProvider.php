@@ -10,6 +10,7 @@ namespace WooCommerce\CustomerGroups\Frontend;
 use WooCommerce\CustomerGroups\Container;
 use WooCommerce\CustomerGroups\Frontend\Pricing\CartDiscountApplier;
 use WooCommerce\CustomerGroups\Frontend\Pricing\ProductPriceDisplay;
+use WooCommerce\CustomerGroups\Frontend\Shipping\ShippingMethodFilter;
 use WooCommerce\CustomerGroups\Frontend\Visibility\ProductVisibilityGuard;
 use WooCommerce\CustomerGroups\Services\DiscountCalculator;
 use WooCommerce\CustomerGroups\Services\GroupResolver;
@@ -53,6 +54,7 @@ final class FrontendServiceProvider {
 		$this->container->get( CartDiscountApplier::class )->register_hooks();
 		$this->container->get( ProductPriceDisplay::class )->register_hooks();
 		$this->container->get( ProductVisibilityGuard::class )->register_hooks();
+		$this->container->get( ShippingMethodFilter::class )->register_hooks();
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
@@ -87,6 +89,13 @@ final class FrontendServiceProvider {
 			ProductVisibilityGuard::class,
 			fn(): ProductVisibilityGuard => new ProductVisibilityGuard(
 				$this->container->get( ProductVisibilityChecker::class )
+			)
+		);
+
+		$this->container->set(
+			ShippingMethodFilter::class,
+			fn(): ShippingMethodFilter => new ShippingMethodFilter(
+				$this->container->get( GroupResolver::class )
 			)
 		);
 	}

@@ -100,4 +100,28 @@ final class Sanitizer {
 
 		return array_values( array_unique( array_filter( $ids ) ) );
 	}
+
+	/**
+	 * Sanitize an array of WooCommerce shipping method rate IDs.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string[]
+	 */
+	public static function allowed_shipping_methods( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		$methods = array();
+
+		foreach ( $value as $method_id ) {
+			$method_id = sanitize_text_field( wp_unslash( (string) $method_id ) );
+
+			if ( preg_match( '/^[a-z0-9_]+(?::\d+)?$/', $method_id ) ) {
+				$methods[] = $method_id;
+			}
+		}
+
+		return array_values( array_unique( $methods ) );
+	}
 }

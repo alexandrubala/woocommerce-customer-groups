@@ -70,15 +70,23 @@ final class CustomerGroup {
 	private string $description;
 
 	/**
+	 * Allowed WooCommerce shipping method rate IDs.
+	 *
+	 * @var string[]
+	 */
+	private array $allowed_shipping_methods;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param int    $id             Group post ID.
-	 * @param string $name           Group name.
-	 * @param string $slug           Group slug.
-	 * @param string $status         Post status.
-	 * @param string $discount_type  Discount type.
-	 * @param float  $discount_value Discount value.
-	 * @param string $description    Optional description.
+	 * @param int      $id                       Group post ID.
+	 * @param string   $name                     Group name.
+	 * @param string   $slug                     Group slug.
+	 * @param string   $status                   Post status.
+	 * @param string   $discount_type            Discount type.
+	 * @param float    $discount_value           Discount value.
+	 * @param string   $description              Optional description.
+	 * @param string[] $allowed_shipping_methods Allowed shipping method rate IDs.
 	 */
 	public function __construct(
 		int $id,
@@ -87,15 +95,17 @@ final class CustomerGroup {
 		string $status,
 		string $discount_type,
 		float $discount_value,
-		string $description = ''
+		string $description = '',
+		array $allowed_shipping_methods = array()
 	) {
-		$this->id             = $id;
-		$this->name           = $name;
-		$this->slug           = $slug;
-		$this->status         = $status;
-		$this->discount_type  = $discount_type;
-		$this->discount_value = $discount_value;
-		$this->description    = $description;
+		$this->id                       = $id;
+		$this->name                     = $name;
+		$this->slug                     = $slug;
+		$this->status                   = $status;
+		$this->discount_type            = $discount_type;
+		$this->discount_value           = $discount_value;
+		$this->description              = $description;
+		$this->allowed_shipping_methods = $allowed_shipping_methods;
 	}
 
 	/**
@@ -113,6 +123,18 @@ final class CustomerGroup {
 
 		$discount_value = (float) get_post_meta( $post->ID, WCCG_META_DISCOUNT_VALUE, true );
 		$description    = (string) get_post_meta( $post->ID, WCCG_META_DESCRIPTION, true );
+		$allowed_shipping_methods = get_post_meta( $post->ID, WCCG_META_ALLOWED_SHIPPING_METHODS, true );
+
+		if ( ! is_array( $allowed_shipping_methods ) ) {
+			$allowed_shipping_methods = array();
+		}
+
+		$allowed_shipping_methods = array_values(
+			array_filter(
+				array_map( 'strval', $allowed_shipping_methods ),
+				static fn( string $rate_id ): bool => '' !== $rate_id
+			)
+		);
 
 		return new self(
 			(int) $post->ID,
@@ -121,7 +143,8 @@ final class CustomerGroup {
 			(string) $post->post_status,
 			$discount_type,
 			$discount_value,
-			$description
+			$description,
+			$allowed_shipping_methods
 		);
 	}
 
@@ -204,5 +227,23 @@ final class CustomerGroup {
 	 */
 	public function has_discount(): bool {
 		return $this->discount_value > 0;
+	}
+
+	/**
+	 * Get allowed WooCommerce shipping method rate IDs.
+	 *
+	 * @return string[]
+	 */
+	public function get_allowed_shipping_methods(): array {
+		return $this->allowed_shipping_methods;
+	}
+
+	/**
+	 * Whether the group restricts available shipping methods.
+	 *
+	 * @return bool
+	 */
+	public function has_shipping_restrictions(): bool {
+		return ! empty( $this->allowed_shipping_methods );
 	}
 }
