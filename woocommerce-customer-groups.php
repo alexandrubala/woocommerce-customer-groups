@@ -8,7 +8,7 @@
  * Plugin Name:       WooCommerce Customer Groups
  * Plugin URI:        https://github.com/alexandrubala/woocommerce-customer-groups
  * Description:       Customer segmentation and role-based pricing for WooCommerce stores.
- * Version:           1.0.1
+ * Version:           1.0.2
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            alexandrubala
@@ -23,7 +23,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WCCG_VERSION', '1.0.1' );
+define( 'WCCG_VERSION', '1.0.2' );
 define( 'WCCG_FILE', __FILE__ );
 define( 'WCCG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCCG_URL', plugin_dir_url( __FILE__ ) );

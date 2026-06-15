@@ -37,6 +37,8 @@ final class Installer {
 		$post_type = new CustomerGroupPostType();
 		$post_type->register();
 
+		Capabilities::register();
+
 		flush_rewrite_rules();
 	}
 }

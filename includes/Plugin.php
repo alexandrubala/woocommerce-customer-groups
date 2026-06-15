@@ -87,6 +87,9 @@ final class Plugin {
 			return;
 		}
 
+		Capabilities::register();
+		add_action( 'init', array( Capabilities::class, 'register' ), 5 );
+
 		$this->container->get( AdminServiceProvider::class )->register();
 		$this->container->get( FrontendServiceProvider::class )->register();
 	}

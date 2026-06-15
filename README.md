@@ -31,6 +31,18 @@ Create customer groups (VIP, Reseller, Distributor, Partner), assign them to use
 
 No Composer step is required on production — the plugin ships with a built-in autoloader. Run `composer install` only if you need development tooling (PHPCS).
 
+## Admin menu
+
+Customer groups are managed from the standalone **Customer Groups** item in the WordPress admin sidebar (separate from WooCommerce), usually near **Products** and **WooCommerce**.
+
+- **Customer Groups** — list, create, and edit groups
+- **Users → Edit user** — assign a group to a customer
+- **Products → Customer Groups** tab — restrict product visibility by group
+
+Direct URL: `/wp-admin/edit.php?post_type=wc_customer_group`
+
+Requires the `wccg_manage_groups` capability (granted to Administrators and Shop Managers on activation).
+
 ## Development
 
 ```bash
@@ -48,7 +60,7 @@ wp i18n make-pot . languages/woocommerce-customer-groups.pot
 
 ### Customer groups
 
-- Create and manage customer groups from **WooCommerce → Customer Groups**
+- Create and manage customer groups from **Customer Groups** in the WordPress admin sidebar
 - Configure group-level discounts (percentage or fixed amount)
 - Optional internal description per group
 - Assign a group to any user from their profile

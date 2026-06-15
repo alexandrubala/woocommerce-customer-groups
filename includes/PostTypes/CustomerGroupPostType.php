@@ -7,6 +7,8 @@
 
 namespace WooCommerce\CustomerGroups\PostTypes;
 
+use WooCommerce\CustomerGroups\Capabilities;
+
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -54,8 +56,10 @@ final class CustomerGroupPostType {
 				'labels'              => $labels,
 				'public'              => false,
 				'show_ui'             => true,
-				'show_in_menu'        => false,
-				'show_in_admin_bar'   => false,
+				'show_in_menu'        => true,
+				'menu_position'       => 57,
+				'menu_icon'           => 'dashicons-groups',
+				'show_in_admin_bar'   => true,
 				'show_in_nav_menus'   => false,
 				'exclude_from_search' => true,
 				'publicly_queryable'  => false,
@@ -64,14 +68,14 @@ final class CustomerGroupPostType {
 				'supports'            => array( 'title' ),
 				'capability_type'     => 'post',
 				'capabilities'        => array(
-					'edit_post'          => 'manage_woocommerce',
-					'read_post'          => 'manage_woocommerce',
-					'delete_post'        => 'manage_woocommerce',
-					'edit_posts'         => 'manage_woocommerce',
-					'edit_others_posts'  => 'manage_woocommerce',
-					'publish_posts'      => 'manage_woocommerce',
-					'read_private_posts' => 'manage_woocommerce',
-					'create_posts'       => 'manage_woocommerce',
+					'edit_post'          => Capabilities::MANAGE_GROUPS,
+					'read_post'          => Capabilities::MANAGE_GROUPS,
+					'delete_post'        => Capabilities::MANAGE_GROUPS,
+					'edit_posts'         => Capabilities::MANAGE_GROUPS,
+					'edit_others_posts'  => Capabilities::MANAGE_GROUPS,
+					'publish_posts'      => Capabilities::MANAGE_GROUPS,
+					'read_private_posts' => Capabilities::MANAGE_GROUPS,
+					'create_posts'       => Capabilities::MANAGE_GROUPS,
 				),
 				'map_meta_cap'        => true,
 				'rewrite'             => false,
