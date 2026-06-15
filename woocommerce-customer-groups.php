@@ -69,10 +69,7 @@ function wccg_register_post_type(): void {
 add_action( 'init', 'wccg_register_post_type', 0 );
 
 /**
- * Ensure the Customer Groups menu exists under WooCommerce.
- *
- * WooCommerce 8+ uses its own admin navigation and hides unrelated top-level
- * WordPress menus. Registering under WooCommerce keeps the screen discoverable.
+ * Ensure the Customer Groups top-level admin menu is registered.
  *
  * @return void
  */
@@ -95,32 +92,31 @@ function wccg_register_admin_menu(): void {
 		return;
 	}
 
-	if ( ! wccg_woocommerce_admin_menu_exists() ) {
-		return;
-	}
-
 	$menu_slug = 'edit.php?post_type=' . WCCG_POST_TYPE;
 
-	if ( wccg_admin_menu_exists( 'woocommerce', $menu_slug ) ) {
+	if ( wccg_top_level_menu_exists( $menu_slug ) ) {
 		return;
 	}
 
-	add_submenu_page(
-		'woocommerce',
+	add_menu_page(
 		__( 'Customer Groups', 'woocommerce-customer-groups' ),
 		__( 'Customer Groups', 'woocommerce-customer-groups' ),
 		WooCommerce\CustomerGroups\Capabilities::MANAGE_GROUPS,
-		$menu_slug
+		$menu_slug,
+		'',
+		'dashicons-groups',
+		57
 	);
 }
 add_action( 'admin_menu', 'wccg_register_admin_menu', 99 );
 
 /**
- * Check whether the WooCommerce admin menu is registered.
+ * Check whether a top-level admin menu item already exists.
  *
+ * @param string $menu_slug Target menu slug.
  * @return bool
  */
-function wccg_woocommerce_admin_menu_exists(): bool {
+function wccg_top_level_menu_exists( string $menu_slug ): bool {
 	global $menu;
 
 	if ( ! is_array( $menu ) ) {
@@ -128,29 +124,6 @@ function wccg_woocommerce_admin_menu_exists(): bool {
 	}
 
 	foreach ( $menu as $menu_item ) {
-		if ( isset( $menu_item[2] ) && 'woocommerce' === $menu_item[2] ) {
-			return true;
-		}
-	}
-
-	return false;
-}
-
-/**
- * Check whether an admin menu item already exists.
- *
- * @param string $parent_slug Parent menu slug.
- * @param string $menu_slug   Target menu slug.
- * @return bool
- */
-function wccg_admin_menu_exists( string $parent_slug, string $menu_slug ): bool {
-	global $submenu;
-
-	if ( ! is_array( $submenu ) || ! isset( $submenu[ $parent_slug ] ) ) {
-		return false;
-	}
-
-	foreach ( $submenu[ $parent_slug ] as $menu_item ) {
 		if ( isset( $menu_item[2] ) && $menu_slug === $menu_item[2] ) {
 			return true;
 		}
