@@ -15,9 +15,9 @@ defined( 'ABSPATH' ) || exit;
 final class GroupsMenu {
 
 	/**
-	 * Admin page slug used for menu registration.
+	 * Top-level admin menu slug.
 	 */
-	private const MENU_SLUG = 'wccg-customer-groups';
+	private const TOP_LEVEL_SLUG = 'wccg-customer-groups';
 
 	/**
 	 * Register hooks.
@@ -28,10 +28,7 @@ final class GroupsMenu {
 		add_action( 'admin_menu', array( $this, 'register_menus' ), 6 );
 		add_action( 'admin_menu', array( $this, 'connect_wc_admin_pages' ), 6 );
 		add_action( 'admin_head', array( $this, 'highlight_menu' ) );
-
-		if ( has_filter( 'woocommerce_admin_menu_tree' ) || class_exists( '\Automattic\WooCommerce\Internal\Admin\Navigation\WC_Admin_Nav' ) ) {
-			add_filter( 'woocommerce_admin_menu_tree', array( $this, 'add_to_woocommerce_menu_tree' ), 20 );
-		}
+		add_filter( 'woocommerce_admin_menu_tree', array( $this, 'add_to_woocommerce_menu_tree' ), 20 );
 	}
 
 	/**
@@ -45,25 +42,13 @@ final class GroupsMenu {
 		}
 
 		$menu_title = __( 'Customer Groups', 'woocommerce-customer-groups' );
-
-		$woocommerce_hook = add_submenu_page(
-			'woocommerce',
-			$menu_title,
-			$menu_title,
-			'manage_woocommerce',
-			self::MENU_SLUG,
-			'__return_null'
-		);
-
-		if ( is_string( $woocommerce_hook ) ) {
-			add_action( 'load-' . $woocommerce_hook, array( $this, 'redirect_to_list_screen' ) );
-		}
+		$list_slug  = 'edit.php?post_type=' . WCCG_POST_TYPE;
 
 		$top_level_hook = add_menu_page(
 			$menu_title,
 			$menu_title,
 			'manage_woocommerce',
-			self::MENU_SLUG,
+			self::TOP_LEVEL_SLUG,
 			'__return_null',
 			'dashicons-groups',
 			56.6
@@ -71,6 +56,16 @@ final class GroupsMenu {
 
 		if ( is_string( $top_level_hook ) ) {
 			add_action( 'load-' . $top_level_hook, array( $this, 'redirect_to_list_screen' ) );
+		}
+
+		if ( $this->is_woocommerce_menu_available() ) {
+			add_submenu_page(
+				'woocommerce',
+				$menu_title,
+				$menu_title,
+				'manage_woocommerce',
+				$list_slug
+			);
 		}
 	}
 
@@ -149,7 +144,7 @@ final class GroupsMenu {
 	}
 
 	/**
-	 * Keep WooCommerce highlighted while editing customer groups.
+	 * Keep the correct admin menu highlighted on customer group screens.
 	 *
 	 * @return void
 	 */
@@ -160,14 +155,16 @@ final class GroupsMenu {
 			return;
 		}
 
+		$list_slug = 'edit.php?post_type=' . WCCG_POST_TYPE;
+
 		if ( $this->is_woocommerce_menu_available() ) {
 			$parent_file  = 'woocommerce';
-			$submenu_file = self::MENU_SLUG;
+			$submenu_file = $list_slug;
 			return;
 		}
 
-		$parent_file  = self::MENU_SLUG;
-		$submenu_file = self::MENU_SLUG;
+		$parent_file  = self::TOP_LEVEL_SLUG;
+		$submenu_file = self::TOP_LEVEL_SLUG;
 	}
 
 	/**
