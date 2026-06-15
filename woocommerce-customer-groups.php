@@ -8,7 +8,7 @@
  * Plugin Name:       WooCommerce Customer Groups
  * Plugin URI:        https://github.com/alexandrubala/woocommerce-customer-groups
  * Description:       Customer segmentation and role-based pricing for WooCommerce stores.
- * Version:           1.0.2
+ * Version:           1.0.3
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            alexandrubala
@@ -23,7 +23,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WCCG_VERSION', '1.0.2' );
+define( 'WCCG_VERSION', '1.0.3' );
 define( 'WCCG_FILE', __FILE__ );
 define( 'WCCG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCCG_URL', plugin_dir_url( __FILE__ ) );
@@ -41,21 +41,84 @@ define( 'WCCG_META_ALLOWED_PAYMENT_GATEWAYS', '_wccg_allowed_payment_gateways' )
 define( 'WCCG_VISIBILITY_MODE_EVERYONE', 'everyone' );
 define( 'WCCG_VISIBILITY_MODE_RESTRICTED', 'restricted' );
 
-$wccg_autoloader = WCCG_PATH . 'vendor/autoload.php';
-
-if ( is_readable( $wccg_autoloader ) ) {
-	require_once $wccg_autoloader;
-} else {
-	require_once WCCG_PATH . 'includes/Autoloader.php';
-	WooCommerce\CustomerGroups\Autoloader::register();
-}
+/**
+ * Always use the plugin autoloader on production.
+ *
+ * The Composer vendor folder is optional and only needed for PHPCS tooling.
+ * Loading vendor/autoload.php on servers with an outdated generated map can
+ * prevent admin/ and frontend/ classes from being discovered.
+ */
+require_once WCCG_PATH . 'includes/Autoloader.php';
+WooCommerce\CustomerGroups\Autoloader::register();
 
 register_activation_hook( WCCG_FILE, array( 'WooCommerce\CustomerGroups\Installer', 'activate' ) );
 register_deactivation_hook( WCCG_FILE, array( 'WooCommerce\CustomerGroups\Deactivator', 'deactivate' ) );
 
+/**
+ * Ensure the Customer Groups admin menu is visible for administrators.
+ *
+ * This runs independently from the service container so the menu still appears
+ * even if a third-party Composer autoload map was previously broken on the server.
+ *
+ * @return void
+ */
+function wccg_register_admin_menu(): void {
+	if ( ! is_admin() || ! post_type_exists( WCCG_POST_TYPE ) ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'wccg_manage_groups' ) ) {
+		return;
+	}
+
+	$menu_slug = 'edit.php?post_type=' . WCCG_POST_TYPE;
+	$capability = current_user_can( 'wccg_manage_groups' ) ? 'wccg_manage_groups' : 'manage_options';
+
+	global $menu;
+
+	if ( is_array( $menu ) ) {
+		foreach ( $menu as $menu_item ) {
+			if ( isset( $menu_item[2] ) && $menu_slug === $menu_item[2] ) {
+				return;
+			}
+		}
+	}
+
+	add_menu_page(
+		__( 'Customer Groups', 'woocommerce-customer-groups' ),
+		__( 'Customer Groups', 'woocommerce-customer-groups' ),
+		$capability,
+		$menu_slug,
+		'',
+		'dashicons-groups',
+		57
+	);
+}
+add_action( 'admin_menu', 'wccg_register_admin_menu', 99 );
+
+add_action(
+	'init',
+	static function (): void {
+		if ( post_type_exists( WCCG_POST_TYPE ) ) {
+			return;
+		}
+
+		if ( ! class_exists( 'WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType' ) ) {
+			return;
+		}
+
+		( new WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType() )->register();
+	},
+	4
+);
+
 add_action(
 	'plugins_loaded',
 	static function (): void {
+		if ( class_exists( 'WooCommerce\CustomerGroups\Capabilities' ) ) {
+			WooCommerce\CustomerGroups\Capabilities::register();
+		}
+
 		WooCommerce\CustomerGroups\Plugin::instance()->init();
 	},
 	20

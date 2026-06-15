@@ -29,7 +29,7 @@ Create customer groups (VIP, Reseller, Distributor, Partner), assign them to use
 
 3. Activate **WooCommerce Customer Groups** in WordPress (WooCommerce must be active).
 
-No Composer step is required on production — the plugin ships with a built-in autoloader. Run `composer install` only if you need development tooling (PHPCS).
+No Composer step is required on production — the plugin ships with a built-in autoloader. Do **not** upload the `vendor/` folder to production. Run `composer install` only locally for PHPCS tooling.
 
 ## Admin menu
 
@@ -41,7 +41,7 @@ Customer groups are managed from the standalone **Customer Groups** item in the 
 
 Direct URL: `/wp-admin/edit.php?post_type=wc_customer_group`
 
-Requires the `wccg_manage_groups` capability (granted to Administrators and Shop Managers on activation).
+Requires the `wccg_manage_groups` capability (granted to Administrators and Shop Managers on activation). Current plugin version: **1.0.3**.
 
 ## Development
 

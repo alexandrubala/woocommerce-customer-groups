@@ -38,7 +38,7 @@ final class Capabilities {
 		foreach ( self::ROLES as $role_name ) {
 			$role = get_role( $role_name );
 
-			if ( $role && ! $role->has_cap( self::MANAGE_GROUPS ) ) {
+			if ( $role ) {
 				$role->add_cap( self::MANAGE_GROUPS );
 			}
 		}

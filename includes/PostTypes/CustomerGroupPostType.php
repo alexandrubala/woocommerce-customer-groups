@@ -22,7 +22,7 @@ final class CustomerGroupPostType {
 	 * @return void
 	 */
 	public function register_hooks(): void {
-		add_action( 'init', array( $this, 'register' ) );
+		add_action( 'init', array( $this, 'register' ), 5 );
 		add_filter( 'enter_title_here', array( $this, 'filter_title_placeholder' ), 10, 2 );
 	}
 
