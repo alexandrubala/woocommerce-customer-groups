@@ -80,6 +80,9 @@ final class Plugin {
 
 		add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
 
+		Capabilities::register();
+		$this->container->get( AdminServiceProvider::class )->register();
+
 		$requirements = $this->container->get( RequirementsChecker::class );
 
 		if ( ! $requirements->passes() ) {
@@ -87,9 +90,6 @@ final class Plugin {
 			return;
 		}
 
-		Capabilities::register();
-
-		$this->container->get( AdminServiceProvider::class )->register();
 		$this->container->get( FrontendServiceProvider::class )->register();
 	}
 

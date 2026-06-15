@@ -8,7 +8,7 @@
  * Plugin Name:       WooCommerce Customer Groups
  * Plugin URI:        https://github.com/alexandrubala/woocommerce-customer-groups
  * Description:       Customer segmentation and role-based pricing for WooCommerce stores.
- * Version:           1.0.3
+ * Version:           1.0.4
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            alexandrubala
@@ -23,7 +23,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WCCG_VERSION', '1.0.3' );
+define( 'WCCG_VERSION', '1.0.4' );
 define( 'WCCG_FILE', __FILE__ );
 define( 'WCCG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCCG_URL', plugin_dir_url( __FILE__ ) );
@@ -55,62 +55,109 @@ register_activation_hook( WCCG_FILE, array( 'WooCommerce\CustomerGroups\Installe
 register_deactivation_hook( WCCG_FILE, array( 'WooCommerce\CustomerGroups\Deactivator', 'deactivate' ) );
 
 /**
- * Ensure the Customer Groups admin menu is visible for administrators.
+ * Register the customer group post type as early as possible.
  *
- * This runs independently from the service container so the menu still appears
- * even if a third-party Composer autoload map was previously broken on the server.
+ * @return void
+ */
+function wccg_register_post_type(): void {
+	if ( ! class_exists( 'WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType' ) ) {
+		return;
+	}
+
+	( new WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType() )->register();
+}
+add_action( 'init', 'wccg_register_post_type', 0 );
+
+/**
+ * Ensure the Customer Groups menu exists under WooCommerce.
+ *
+ * WooCommerce 8+ uses its own admin navigation and hides unrelated top-level
+ * WordPress menus. Registering under WooCommerce keeps the screen discoverable.
  *
  * @return void
  */
 function wccg_register_admin_menu(): void {
-	if ( ! is_admin() || ! post_type_exists( WCCG_POST_TYPE ) ) {
+	if ( ! is_admin() ) {
 		return;
 	}
 
-	if ( ! current_user_can( 'manage_options' ) && ! current_user_can( 'wccg_manage_groups' ) ) {
+	wccg_register_post_type();
+
+	if ( ! post_type_exists( WCCG_POST_TYPE ) ) {
+		return;
+	}
+
+	if ( ! class_exists( 'WooCommerce\CustomerGroups\Capabilities' ) ) {
+		return;
+	}
+
+	if ( ! WooCommerce\CustomerGroups\Capabilities::current_user_can_manage() ) {
+		return;
+	}
+
+	if ( ! wccg_woocommerce_admin_menu_exists() ) {
 		return;
 	}
 
 	$menu_slug = 'edit.php?post_type=' . WCCG_POST_TYPE;
-	$capability = current_user_can( 'wccg_manage_groups' ) ? 'wccg_manage_groups' : 'manage_options';
 
-	global $menu;
-
-	if ( is_array( $menu ) ) {
-		foreach ( $menu as $menu_item ) {
-			if ( isset( $menu_item[2] ) && $menu_slug === $menu_item[2] ) {
-				return;
-			}
-		}
+	if ( wccg_admin_menu_exists( 'woocommerce', $menu_slug ) ) {
+		return;
 	}
 
-	add_menu_page(
+	add_submenu_page(
+		'woocommerce',
 		__( 'Customer Groups', 'woocommerce-customer-groups' ),
 		__( 'Customer Groups', 'woocommerce-customer-groups' ),
-		$capability,
-		$menu_slug,
-		'',
-		'dashicons-groups',
-		57
+		WooCommerce\CustomerGroups\Capabilities::MANAGE_GROUPS,
+		$menu_slug
 	);
 }
 add_action( 'admin_menu', 'wccg_register_admin_menu', 99 );
 
-add_action(
-	'init',
-	static function (): void {
-		if ( post_type_exists( WCCG_POST_TYPE ) ) {
-			return;
-		}
+/**
+ * Check whether the WooCommerce admin menu is registered.
+ *
+ * @return bool
+ */
+function wccg_woocommerce_admin_menu_exists(): bool {
+	global $menu;
 
-		if ( ! class_exists( 'WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType' ) ) {
-			return;
-		}
+	if ( ! is_array( $menu ) ) {
+		return false;
+	}
 
-		( new WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType() )->register();
-	},
-	4
-);
+	foreach ( $menu as $menu_item ) {
+		if ( isset( $menu_item[2] ) && 'woocommerce' === $menu_item[2] ) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+/**
+ * Check whether an admin menu item already exists.
+ *
+ * @param string $parent_slug Parent menu slug.
+ * @param string $menu_slug   Target menu slug.
+ * @return bool
+ */
+function wccg_admin_menu_exists( string $parent_slug, string $menu_slug ): bool {
+	global $submenu;
+
+	if ( ! is_array( $submenu ) || ! isset( $submenu[ $parent_slug ] ) ) {
+		return false;
+	}
+
+	foreach ( $submenu[ $parent_slug ] as $menu_item ) {
+		if ( isset( $menu_item[2] ) && $menu_slug === $menu_item[2] ) {
+			return true;
+		}
+	}
+
+	return false;
+}
 
 add_action(
 	'plugins_loaded',

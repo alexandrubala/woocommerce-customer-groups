@@ -20,7 +20,7 @@ final class GroupsMenu {
 	 * @return void
 	 */
 	public function register_hooks(): void {
-		add_action( 'admin_menu', array( $this, 'connect_wc_admin_pages' ), 6 );
+		add_action( 'admin_menu', array( $this, 'connect_wc_admin_pages' ), 100 );
 	}
 
 	/**

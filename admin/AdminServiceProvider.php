@@ -49,12 +49,12 @@ final class AdminServiceProvider {
 	 */
 	public function register(): void {
 		$this->register_services();
+		$this->container->get( CustomerGroupPostType::class )->register_hooks();
 
 		if ( ! is_admin() ) {
 			return;
 		}
 
-		$this->container->get( CustomerGroupPostType::class )->register_hooks();
 		$this->container->get( GroupsMenu::class )->register_hooks();
 		$this->container->get( GroupSettingsMetaBox::class )->register_hooks();
 		$this->container->get( GroupListColumns::class )->register_hooks();

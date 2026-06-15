@@ -22,7 +22,6 @@ final class CustomerGroupPostType {
 	 * @return void
 	 */
 	public function register_hooks(): void {
-		add_action( 'init', array( $this, 'register' ), 5 );
 		add_filter( 'enter_title_here', array( $this, 'filter_title_placeholder' ), 10, 2 );
 	}
 
@@ -32,6 +31,10 @@ final class CustomerGroupPostType {
 	 * @return void
 	 */
 	public function register(): void {
+		if ( post_type_exists( WCCG_POST_TYPE ) ) {
+			return;
+		}
+
 		$labels = array(
 			'name'                  => __( 'Customer Groups', 'woocommerce-customer-groups' ),
 			'singular_name'         => __( 'Customer Group', 'woocommerce-customer-groups' ),
@@ -56,9 +59,7 @@ final class CustomerGroupPostType {
 				'labels'              => $labels,
 				'public'              => false,
 				'show_ui'             => true,
-				'show_in_menu'        => true,
-				'menu_position'       => 57,
-				'menu_icon'           => 'dashicons-groups',
+				'show_in_menu'        => 'woocommerce',
 				'show_in_admin_bar'   => true,
 				'show_in_nav_menus'   => false,
 				'exclude_from_search' => true,
@@ -76,6 +77,12 @@ final class CustomerGroupPostType {
 					'publish_posts'      => Capabilities::MANAGE_GROUPS,
 					'read_private_posts' => Capabilities::MANAGE_GROUPS,
 					'create_posts'       => Capabilities::MANAGE_GROUPS,
+					'delete_posts'       => Capabilities::MANAGE_GROUPS,
+					'delete_private_posts' => Capabilities::MANAGE_GROUPS,
+					'delete_published_posts' => Capabilities::MANAGE_GROUPS,
+					'delete_others_posts' => Capabilities::MANAGE_GROUPS,
+					'edit_private_posts' => Capabilities::MANAGE_GROUPS,
+					'edit_published_posts' => Capabilities::MANAGE_GROUPS,
 				),
 				'map_meta_cap'        => true,
 				'rewrite'             => false,
@@ -87,7 +94,7 @@ final class CustomerGroupPostType {
 	/**
 	 * Customize the title field placeholder.
 	 *
-	 * @param string  $title Placeholder text.
+	 * @param string   $title Placeholder text.
 	 * @param \WP_Post $post  Current post object.
 	 * @return string
 	 */

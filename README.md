@@ -33,15 +33,15 @@ No Composer step is required on production — the plugin ships with a built-in 
 
 ## Admin menu
 
-Customer groups are managed from the standalone **Customer Groups** item in the WordPress admin sidebar (separate from WooCommerce), usually near **Products** and **WooCommerce**.
+Customer groups are managed from **WooCommerce → Customer Groups** in the WordPress admin sidebar.
 
-- **Customer Groups** — list, create, and edit groups
+- **WooCommerce → Customer Groups** — list, create, and edit groups
 - **Users → Edit user** — assign a group to a customer
 - **Products → Customer Groups** tab — restrict product visibility by group
 
 Direct URL: `/wp-admin/edit.php?post_type=wc_customer_group`
 
-Requires the `wccg_manage_groups` capability (granted to Administrators and Shop Managers on activation). Current plugin version: **1.0.3**.
+Requires the `wccg_manage_groups` capability (granted to Administrators and Shop Managers on activation). Current plugin version: **1.0.4**.
 
 ## Development
 
@@ -60,7 +60,7 @@ wp i18n make-pot . languages/woocommerce-customer-groups.pot
 
 ### Customer groups
 
-- Create and manage customer groups from **Customer Groups** in the WordPress admin sidebar
+- Create and manage customer groups from **WooCommerce → Customer Groups**
 - Configure group-level discounts (percentage or fixed amount)
 - Optional internal description per group
 - Assign a group to any user from their profile
