@@ -112,7 +112,7 @@ final class Plugin {
 	private function register_core_services(): void {
 		$this->container->set( RequirementsChecker::class, static fn(): RequirementsChecker => new RequirementsChecker() );
 		$this->container->set( AdminServiceProvider::class, fn(): AdminServiceProvider => new AdminServiceProvider( $this->container ) );
-		$this->container->set( FrontendServiceProvider::class, static fn(): FrontendServiceProvider => new FrontendServiceProvider() );
+		$this->container->set( FrontendServiceProvider::class, fn(): FrontendServiceProvider => new FrontendServiceProvider( $this->container ) );
 	}
 
 	/**

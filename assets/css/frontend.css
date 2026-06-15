@@ -1,0 +1,12 @@
+/**
+ * Frontend price display styles for WooCommerce Customer Groups.
+ */
+
+.wccg-price del {
+	opacity: 0.7;
+}
+
+.wccg-price ins {
+	text-decoration: none;
+	font-weight: 600;
+}
