@@ -41,7 +41,7 @@ Customer groups are managed from **WooCommerce → Customer Groups** in the Word
 
 Direct URL: `/wp-admin/edit.php?post_type=wc_customer_group`
 
-Requires the `wccg_manage_groups` capability (granted to Administrators and Shop Managers on activation). Current plugin version: **1.0.4**.
+Requires the `edit_wccg_groups` capability (granted to Administrators and Shop Managers on activation). Current plugin version: **1.0.5**.
 
 ## Development
 

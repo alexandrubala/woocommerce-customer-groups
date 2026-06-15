@@ -7,7 +7,6 @@
 
 namespace WooCommerce\CustomerGroups\Admin\MetaBoxes;
 
-use WooCommerce\CustomerGroups\Capabilities;
 use WooCommerce\CustomerGroups\Helpers\PaymentMethodHelper;
 use WooCommerce\CustomerGroups\Helpers\Sanitizer;
 use WooCommerce\CustomerGroups\Helpers\ShippingMethodHelper;
@@ -241,7 +240,7 @@ final class GroupSettingsMetaBox {
 			return;
 		}
 
-		if ( ! current_user_can( Capabilities::MANAGE_GROUPS, $post_id ) ) {
+		if ( ! current_user_can( 'edit_post', $post_id ) ) {
 			return;
 		}
 

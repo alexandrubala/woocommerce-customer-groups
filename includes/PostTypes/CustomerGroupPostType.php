@@ -7,8 +7,6 @@
 
 namespace WooCommerce\CustomerGroups\PostTypes;
 
-use WooCommerce\CustomerGroups\Capabilities;
-
 defined( 'ABSPATH' ) || exit;
 
 /**
@@ -67,23 +65,7 @@ final class CustomerGroupPostType {
 				'has_archive'         => false,
 				'hierarchical'        => false,
 				'supports'            => array( 'title' ),
-				'capability_type'     => 'post',
-				'capabilities'        => array(
-					'edit_post'          => Capabilities::MANAGE_GROUPS,
-					'read_post'          => Capabilities::MANAGE_GROUPS,
-					'delete_post'        => Capabilities::MANAGE_GROUPS,
-					'edit_posts'         => Capabilities::MANAGE_GROUPS,
-					'edit_others_posts'  => Capabilities::MANAGE_GROUPS,
-					'publish_posts'      => Capabilities::MANAGE_GROUPS,
-					'read_private_posts' => Capabilities::MANAGE_GROUPS,
-					'create_posts'       => Capabilities::MANAGE_GROUPS,
-					'delete_posts'       => Capabilities::MANAGE_GROUPS,
-					'delete_private_posts' => Capabilities::MANAGE_GROUPS,
-					'delete_published_posts' => Capabilities::MANAGE_GROUPS,
-					'delete_others_posts' => Capabilities::MANAGE_GROUPS,
-					'edit_private_posts' => Capabilities::MANAGE_GROUPS,
-					'edit_published_posts' => Capabilities::MANAGE_GROUPS,
-				),
+				'capability_type'     => array( 'wccg_group', 'wccg_groups' ),
 				'map_meta_cap'        => true,
 				'rewrite'             => false,
 				'query_var'           => false,

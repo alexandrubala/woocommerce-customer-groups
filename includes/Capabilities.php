@@ -15,18 +15,39 @@ defined( 'ABSPATH' ) || exit;
 final class Capabilities {
 
 	/**
-	 * Capability required to manage customer groups.
+	 * Primitive capability required to list and manage customer groups.
 	 */
-	public const MANAGE_GROUPS = 'wccg_manage_groups';
+	public const MANAGE_GROUPS = 'edit_wccg_groups';
 
 	/**
-	 * Roles that should receive the manage-groups capability.
+	 * Roles that should receive customer group capabilities.
 	 *
 	 * @var string[]
 	 */
 	private const ROLES = array(
 		'administrator',
 		'shop_manager',
+	);
+
+	/**
+	 * Capabilities generated for the customer group post type.
+	 *
+	 * @var string[]
+	 */
+	private const GROUP_CAPS = array(
+		'edit_wccg_groups',
+		'edit_wccg_group',
+		'read_wccg_group',
+		'delete_wccg_group',
+		'edit_others_wccg_groups',
+		'publish_wccg_groups',
+		'read_private_wccg_groups',
+		'delete_wccg_groups',
+		'delete_private_wccg_groups',
+		'delete_published_wccg_groups',
+		'delete_others_wccg_groups',
+		'edit_private_wccg_groups',
+		'edit_published_wccg_groups',
 	);
 
 	/**
@@ -45,8 +66,12 @@ final class Capabilities {
 		foreach ( self::ROLES as $role_name ) {
 			$role = get_role( $role_name );
 
-			if ( $role ) {
-				$role->add_cap( self::MANAGE_GROUPS );
+			if ( ! $role ) {
+				continue;
+			}
+
+			foreach ( self::GROUP_CAPS as $capability ) {
+				$role->add_cap( $capability );
 			}
 		}
 
@@ -55,7 +80,7 @@ final class Capabilities {
 		}
 
 		self::$registered = true;
-		add_filter( 'user_has_cap', array( self::class, 'map_manage_groups_cap' ), 10, 4 );
+		add_filter( 'user_has_cap', array( self::class, 'grant_group_caps' ), 10, 4 );
 	}
 
 	/**
@@ -68,7 +93,7 @@ final class Capabilities {
 	}
 
 	/**
-	 * Grant manage-groups to store administrators even if caps were not persisted.
+	 * Grant customer group capabilities to store administrators.
 	 *
 	 * @param bool[]   $allcaps All capabilities for the user.
 	 * @param string[] $caps    Requested capabilities.
@@ -76,17 +101,36 @@ final class Capabilities {
 	 * @param \WP_User $user    User object.
 	 * @return bool[]
 	 */
-	public static function map_manage_groups_cap( array $allcaps, array $caps, array $args, \WP_User $user ): array {
+	public static function grant_group_caps( array $allcaps, array $caps, array $args, \WP_User $user ): array {
 		unset( $caps, $args );
 
-		if ( ! empty( $allcaps[ self::MANAGE_GROUPS ] ) ) {
-			return $allcaps;
-		}
-
-		if ( ! empty( $allcaps['manage_options'] ) || ! empty( $allcaps['manage_woocommerce'] ) ) {
-			$allcaps[ self::MANAGE_GROUPS ] = true;
+		if ( self::user_is_group_manager( $user, $allcaps ) ) {
+			foreach ( self::GROUP_CAPS as $capability ) {
+				$allcaps[ $capability ] = true;
+			}
 		}
 
 		return $allcaps;
+	}
+
+	/**
+	 * Whether a user should be allowed to manage customer groups.
+	 *
+	 * @param \WP_User $user    User object.
+	 * @param bool[]   $allcaps Known capabilities for the user.
+	 * @return bool
+	 */
+	private static function user_is_group_manager( \WP_User $user, array $allcaps ): bool {
+		if ( ! empty( $allcaps[ self::MANAGE_GROUPS ] ) ) {
+			return true;
+		}
+
+		if ( ! empty( $allcaps['manage_options'] ) || ! empty( $allcaps['manage_woocommerce'] ) ) {
+			return true;
+		}
+
+		$roles = (array) $user->roles;
+
+		return in_array( 'administrator', $roles, true ) || in_array( 'shop_manager', $roles, true );
 	}
 }
