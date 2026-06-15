@@ -1,8 +1,8 @@
 # WooCommerce Customer Groups
 
-Customer segmentation and role-based pricing for WooCommerce stores.
+Customer segmentation, role-based pricing, and checkout restrictions for WooCommerce stores.
 
-Create customer groups (VIP, Reseller, Distributor, Partner), assign them to users, and configure group-level discounts. Built with PHP 8.0+, OOP architecture, and WordPress Coding Standards.
+Create customer groups (VIP, Reseller, Distributor, Partner), assign them to users, and configure group-level discounts, product visibility, shipping methods, and payment gateways. Built with PHP 8.0+, OOP architecture, and WordPress Coding Standards.
 
 ## Requirements
 
@@ -44,19 +44,53 @@ wp i18n make-pot . languages/woocommerce-customer-groups.pot
 
 ## Features
 
-### v1.0 (current)
+### Customer groups
 
 - Create and manage customer groups from **WooCommerce → Customer Groups**
-- Configure global group discounts (percentage or fixed amount)
+- Configure group-level discounts (percentage or fixed amount)
+- Optional internal description per group
 - Assign a group to any user from their profile
 - View assigned groups in the Users list table
 
+### Pricing
+
+- Apply group discounts on product pages, cart, and checkout
+- Display discounted prices for logged-in customers with an active group discount
+
+### Product visibility
+
+- Per-product visibility settings on the **Customer Groups** product data tab
+- **Everyone** — product is visible to all visitors (default)
+- **Restricted** — product is visible only to customers in selected groups
+- Hidden products are excluded from shop, search, and direct access for unauthorized users
+
+### Shipping restrictions
+
+- Per-group allowed shipping methods on the group edit screen
+- Checkbox list of all enabled shipping methods, grouped by WooCommerce zone (title + rate ID)
+- Leave all unchecked to allow every method; select specific methods to restrict checkout options
+- Stale rate IDs are automatically removed when a group is saved
+- Works on classic checkout and WooCommerce Checkout Blocks
+
+### Payment gateway restrictions
+
+- Per-group allowed payment gateways on the group edit screen
+- Checkbox list of all enabled payment gateways (title + gateway ID)
+- Leave all unchecked to allow every gateway; select specific gateways to restrict checkout options
+- Stale gateway IDs are automatically removed when a group is saved
+- Works on classic checkout and WooCommerce Checkout Blocks
+
+### Architecture
+
+- Service container with dedicated admin and frontend service providers
+- `CustomerGroup` model, repository caching, and `GroupResolver` for user-to-group mapping
+- Sanitization helpers and extensibility hooks (`wccg_group_meta`, `wccg_package_rates`, `wccg_available_payment_gateways`, and others)
+- Translation-ready strings via the `woocommerce-customer-groups` text domain
+
 ### Roadmap
 
-- **v1.1** — Apply group discounts on product pages, cart, and checkout
-- **v2** — Product visibility restricted by group
-- **v3** — Shipping method restrictions by group
-- **v4** — Payment gateway restrictions by group
+- Admin list column for allowed shipping/payment methods (optional UI enhancement)
+- Additional group-based rules and reporting as needed
 
 ## License
 
