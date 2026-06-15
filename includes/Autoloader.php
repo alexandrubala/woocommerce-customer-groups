@@ -40,9 +40,19 @@ final class Autoloader {
 		$relative_path  = str_replace( '\\', '/', $relative_class ) . '.php';
 		$search_paths   = array(
 			WCCG_PATH . 'includes/' . $relative_path,
-			WCCG_PATH . 'admin/' . $relative_path,
-			WCCG_PATH . 'frontend/' . $relative_path,
 		);
+
+		$admin_prefix = 'Admin/';
+
+		if ( str_starts_with( $relative_path, $admin_prefix ) ) {
+			$search_paths[] = WCCG_PATH . 'admin/' . substr( $relative_path, strlen( $admin_prefix ) );
+		}
+
+		$frontend_prefix = 'Frontend/';
+
+		if ( str_starts_with( $relative_path, $frontend_prefix ) ) {
+			$search_paths[] = WCCG_PATH . 'frontend/' . substr( $relative_path, strlen( $frontend_prefix ) );
+		}
 
 		foreach ( $search_paths as $path ) {
 			if ( is_readable( $path ) ) {

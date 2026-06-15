@@ -29,6 +29,8 @@ Create customer groups (VIP, Reseller, Distributor, Partner), assign them to use
 
 3. Activate **WooCommerce Customer Groups** in WordPress (WooCommerce must be active).
 
+No Composer step is required on production — the plugin ships with a built-in autoloader. Run `composer install` only if you need development tooling (PHPCS).
+
 ## Development
 
 ```bash

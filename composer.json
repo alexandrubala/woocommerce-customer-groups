@@ -13,11 +13,9 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"WooCommerce\\CustomerGroups\\": [
-				"includes/",
-				"admin/",
-				"frontend/"
-			]
+			"WooCommerce\\CustomerGroups\\": "includes/",
+			"WooCommerce\\CustomerGroups\\Admin\\": "admin/",
+			"WooCommerce\\CustomerGroups\\Frontend\\": "frontend/"
 		}
 	},
 	"scripts": {
