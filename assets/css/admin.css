@@ -19,3 +19,19 @@
 .column-wccg_customer_group {
 	width: 12%;
 }
+
+.wccg-visibility-mode-options,
+.wccg-allowed-groups-list {
+	display: block;
+	margin-top: 0.25rem;
+}
+
+.wccg-visibility-mode-option,
+.wccg-allowed-group-option {
+	display: block;
+	margin: 0.35rem 0;
+}
+
+.wccg-allowed-groups-list label {
+	font-weight: 400;
+}

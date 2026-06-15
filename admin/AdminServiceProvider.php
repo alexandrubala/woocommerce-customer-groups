@@ -10,12 +10,14 @@ namespace WooCommerce\CustomerGroups\Admin;
 use WooCommerce\CustomerGroups\Admin\AdminColumns\GroupListColumns;
 use WooCommerce\CustomerGroups\Admin\MetaBoxes\GroupSettingsMetaBox;
 use WooCommerce\CustomerGroups\Admin\Menus\GroupsMenu;
+use WooCommerce\CustomerGroups\Admin\ProductData\ProductVisibilityTab;
 use WooCommerce\CustomerGroups\Admin\UserProfile\UserGroupField;
 use WooCommerce\CustomerGroups\Container;
 use WooCommerce\CustomerGroups\Contracts\GroupRepositoryInterface;
 use WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType;
 use WooCommerce\CustomerGroups\Repositories\CustomerGroupRepository;
 use WooCommerce\CustomerGroups\Services\GroupResolver;
+use WooCommerce\CustomerGroups\Services\ProductVisibilityChecker;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -57,6 +59,7 @@ final class AdminServiceProvider {
 		$this->container->get( GroupSettingsMetaBox::class )->register_hooks();
 		$this->container->get( GroupListColumns::class )->register_hooks();
 		$this->container->get( UserGroupField::class )->register_hooks();
+		$this->container->get( ProductVisibilityTab::class )->register_hooks();
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_assets' ) );
 	}
@@ -83,6 +86,11 @@ final class AdminServiceProvider {
 		);
 
 		$this->container->set(
+			ProductVisibilityChecker::class,
+			fn(): ProductVisibilityChecker => new ProductVisibilityChecker( $this->container->get( GroupResolver::class ) )
+		);
+
+		$this->container->set(
 			CustomerGroupPostType::class,
 			static fn(): CustomerGroupPostType => new CustomerGroupPostType()
 		);
@@ -106,6 +114,11 @@ final class AdminServiceProvider {
 			UserGroupField::class,
 			fn(): UserGroupField => new UserGroupField( $this->container->get( CustomerGroupRepository::class ) )
 		);
+
+		$this->container->set(
+			ProductVisibilityTab::class,
+			fn(): ProductVisibilityTab => new ProductVisibilityTab( $this->container->get( CustomerGroupRepository::class ) )
+		);
 	}
 
 	/**
@@ -121,10 +134,11 @@ final class AdminServiceProvider {
 			return;
 		}
 
-		$is_group_screen = WCCG_POST_TYPE === $screen->post_type;
-		$is_user_screen  = in_array( $hook_suffix, array( 'user-edit.php', 'profile.php' ), true );
+		$is_group_screen   = WCCG_POST_TYPE === $screen->post_type;
+		$is_user_screen    = in_array( $hook_suffix, array( 'user-edit.php', 'profile.php' ), true );
+		$is_product_screen = 'product' === $screen->post_type;
 
-		if ( ! $is_group_screen && ! $is_user_screen ) {
+		if ( ! $is_group_screen && ! $is_user_screen && ! $is_product_screen ) {
 			return;
 		}
 
@@ -134,5 +148,15 @@ final class AdminServiceProvider {
 			array(),
 			WCCG_VERSION
 		);
+
+		if ( $is_product_screen ) {
+			wp_enqueue_script(
+				'wccg-admin-product-visibility',
+				WCCG_URL . 'assets/js/admin-product-visibility.js',
+				array( 'jquery' ),
+				WCCG_VERSION,
+				true
+			);
+		}
 	}
 }

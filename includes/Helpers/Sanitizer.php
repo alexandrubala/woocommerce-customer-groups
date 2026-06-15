@@ -68,4 +68,36 @@ final class Sanitizer {
 	public static function description( $value ): string {
 		return sanitize_textarea_field( wp_unslash( (string) $value ) );
 	}
+
+	/**
+	 * Sanitize a product visibility mode value.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string
+	 */
+	public static function visibility_mode( $value ): string {
+		$value = sanitize_key( (string) $value );
+
+		if ( WCCG_VISIBILITY_MODE_RESTRICTED === $value ) {
+			return WCCG_VISIBILITY_MODE_RESTRICTED;
+		}
+
+		return WCCG_VISIBILITY_MODE_EVERYONE;
+	}
+
+	/**
+	 * Sanitize an array of allowed group IDs.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return int[]
+	 */
+	public static function allowed_group_ids( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		$ids = array_map( 'absint', $value );
+
+		return array_values( array_unique( array_filter( $ids ) ) );
+	}
 }
