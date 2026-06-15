@@ -1,6 +1,6 @@
 <?php
 /**
- * WooCommerce submenu for customer groups.
+ * Admin menus for customer groups.
  *
  * @package WooCommerce\CustomerGroups
  */
@@ -15,13 +15,63 @@ defined( 'ABSPATH' ) || exit;
 final class GroupsMenu {
 
 	/**
+	 * Admin page slug used for menu registration.
+	 */
+	private const MENU_SLUG = 'wccg-customer-groups';
+
+	/**
 	 * Register hooks.
 	 *
 	 * @return void
 	 */
 	public function register_hooks(): void {
-		add_action( 'admin_menu', array( $this, 'connect_wc_admin_pages' ), 5 );
-		add_action( 'admin_menu', array( $this, 'register_menu' ), 999 );
+		add_action( 'admin_menu', array( $this, 'register_menus' ), 6 );
+		add_action( 'admin_menu', array( $this, 'connect_wc_admin_pages' ), 6 );
+		add_action( 'admin_head', array( $this, 'highlight_menu' ) );
+
+		if ( has_filter( 'woocommerce_admin_menu_tree' ) || class_exists( '\Automattic\WooCommerce\Internal\Admin\Navigation\WC_Admin_Nav' ) ) {
+			add_filter( 'woocommerce_admin_menu_tree', array( $this, 'add_to_woocommerce_menu_tree' ), 20 );
+		}
+	}
+
+	/**
+	 * Register admin menu entries.
+	 *
+	 * @return void
+	 */
+	public function register_menus(): void {
+		if ( ! current_user_can( 'manage_woocommerce' ) ) {
+			return;
+		}
+
+		$menu_title = __( 'Customer Groups', 'woocommerce-customer-groups' );
+
+		$woocommerce_hook = add_submenu_page(
+			'woocommerce',
+			$menu_title,
+			$menu_title,
+			'manage_woocommerce',
+			self::MENU_SLUG,
+			'__return_null'
+		);
+
+		if ( is_string( $woocommerce_hook ) ) {
+			add_action( 'load-' . $woocommerce_hook, array( $this, 'redirect_to_list_screen' ) );
+		}
+
+		$top_level_hook = add_menu_page(
+			$menu_title,
+			$menu_title,
+			'manage_woocommerce',
+			self::MENU_SLUG,
+			'__return_null',
+			'dashicons-groups',
+			56.6
+		);
+
+		if ( is_string( $top_level_hook ) ) {
+			add_action( 'load-' . $top_level_hook, array( $this, 'redirect_to_list_screen' ) );
+		}
 	}
 
 	/**
@@ -34,12 +84,23 @@ final class GroupsMenu {
 			return;
 		}
 
+		$list_path = add_query_arg( 'post_type', WCCG_POST_TYPE, 'edit.php' );
+
 		wc_admin_connect_page(
 			array(
 				'id'        => 'wccg-customer-groups',
 				'screen_id' => 'edit-' . WCCG_POST_TYPE,
 				'title'     => __( 'Customer Groups', 'woocommerce-customer-groups' ),
-				'path'      => add_query_arg( 'post_type', WCCG_POST_TYPE, 'edit.php' ),
+				'path'      => $list_path,
+			)
+		);
+
+		wc_admin_connect_page(
+			array(
+				'id'        => 'wccg-customer-groups-add',
+				'parent'    => 'wccg-customer-groups',
+				'screen_id' => WCCG_POST_TYPE . '-add',
+				'title'     => __( 'Add New Customer Group', 'woocommerce-customer-groups' ),
 			)
 		);
 
@@ -54,53 +115,71 @@ final class GroupsMenu {
 	}
 
 	/**
-	 * Ensure the Customer Groups submenu appears under WooCommerce.
+	 * Place Customer Groups directly under WooCommerce in nested admin navigation.
 	 *
-	 * WooCommerce 8+ rebuilds its admin navigation and may remove third-party
-	 * submenu items registered earlier. Re-register late as a fallback.
-	 *
-	 * @return void
+	 * @param array<string, array<string, mixed>> $tree Navigation tree.
+	 * @return array<string, array<string, mixed>>
 	 */
-	public function register_menu(): void {
+	public function add_to_woocommerce_menu_tree( array $tree ): array {
 		if ( ! current_user_can( 'manage_woocommerce' ) ) {
-			return;
+			return $tree;
 		}
 
-		$menu_slug = 'edit.php?post_type=' . WCCG_POST_TYPE;
-
-		if ( $this->is_submenu_registered( 'woocommerce', $menu_slug ) ) {
-			return;
-		}
-
-		add_submenu_page(
-			'woocommerce',
-			__( 'Customer Groups', 'woocommerce-customer-groups' ),
-			__( 'Customer Groups', 'woocommerce-customer-groups' ),
-			'manage_woocommerce',
-			$menu_slug
+		$tree['wccg-customer-groups'] = array(
+			'parent' => 'woocommerce',
+			'title'  => __( 'Customer Groups', 'woocommerce-customer-groups' ),
+			'url'    => admin_url( 'edit.php?post_type=' . WCCG_POST_TYPE ),
 		);
+
+		if ( class_exists( '\Automattic\WooCommerce\Internal\Admin\Navigation\WC_Admin_Nav' ) ) {
+			\Automattic\WooCommerce\Internal\Admin\Navigation\WC_Admin_Nav::move( $tree, 'wccg-customer-groups', 'woocommerce' );
+		}
+
+		return $tree;
 	}
 
 	/**
-	 * Check whether a submenu slug is already registered under a parent menu.
+	 * Redirect the registered admin page to the customer group list table.
 	 *
-	 * @param string $parent    Parent menu slug.
-	 * @param string $menu_slug Submenu slug to find.
+	 * @return void
+	 */
+	public function redirect_to_list_screen(): void {
+		wp_safe_redirect( admin_url( 'edit.php?post_type=' . WCCG_POST_TYPE ) );
+		exit;
+	}
+
+	/**
+	 * Keep WooCommerce highlighted while editing customer groups.
+	 *
+	 * @return void
+	 */
+	public function highlight_menu(): void {
+		global $parent_file, $submenu_file, $post_type;
+
+		if ( WCCG_POST_TYPE !== $post_type ) {
+			return;
+		}
+
+		if ( $this->is_woocommerce_menu_available() ) {
+			$parent_file  = 'woocommerce';
+			$submenu_file = self::MENU_SLUG;
+			return;
+		}
+
+		$parent_file  = self::MENU_SLUG;
+		$submenu_file = self::MENU_SLUG;
+	}
+
+	/**
+	 * Whether the current user can see the WooCommerce admin menu.
+	 *
 	 * @return bool
 	 */
-	private function is_submenu_registered( string $parent, string $menu_slug ): bool {
-		global $submenu;
-
-		if ( empty( $submenu[ $parent ] ) || ! is_array( $submenu[ $parent ] ) ) {
-			return false;
+	private function is_woocommerce_menu_available(): bool {
+		if ( class_exists( '\WC_Admin_Menus' ) && method_exists( '\WC_Admin_Menus', 'can_view_woocommerce_menu_item' ) ) {
+			return \WC_Admin_Menus::can_view_woocommerce_menu_item();
 		}
 
-		foreach ( $submenu[ $parent ] as $item ) {
-			if ( isset( $item[2] ) && $menu_slug === $item[2] ) {
-				return true;
-			}
-		}
-
-		return false;
+		return current_user_can( 'edit_others_shop_orders' );
 	}
 }
