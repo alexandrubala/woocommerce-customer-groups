@@ -20,20 +20,20 @@
 	width: 12%;
 }
 
-#wccg_customer_groups_data .wc-radios,
-#wccg_customer_groups_data .wc-checkboxes {
+#woocommerce-product-data #wccg_customer_groups_data .wc-radios,
+#woocommerce-product-data #wccg_customer_groups_data .wccg-allowed-groups-list {
 	margin: 0;
 	padding: 0;
 	list-style: none outside;
 }
 
-#wccg_customer_groups_data .wc-radios li,
-#wccg_customer_groups_data .wc-checkboxes li {
+#woocommerce-product-data #wccg_customer_groups_data .wc-radios li,
+#woocommerce-product-data #wccg_customer_groups_data .wccg-allowed-groups-list li {
 	padding: 0.15rem 0;
 }
 
-#wccg_customer_groups_data .wc-radios label,
-#wccg_customer_groups_data .wc-checkboxes label {
+#woocommerce-product-data #wccg_customer_groups_data .wc-radios label,
+#woocommerce-product-data #wccg_customer_groups_data p.form-field .wccg-allowed-groups-list label {
 	float: none;
 	width: auto;
 	margin: 0;
@@ -41,16 +41,20 @@
 	font-weight: 400;
 }
 
-#wccg_customer_groups_data p.form-field > label:first-child {
+#woocommerce-product-data #wccg_customer_groups_data p.form-field > label:first-child {
 	font-weight: 600;
 }
 
-#wccg_customer_groups_data p.form-field > .wc-checkboxes {
+#woocommerce-product-data #wccg_customer_groups_data p.form-field > .wccg-allowed-groups-list {
 	display: block;
 }
 
-#wccg_customer_groups_data p.form-field > .description {
+#woocommerce-product-data #wccg_customer_groups_data p.form-field > .description {
 	display: block;
+	clear: both;
+	float: none;
+	width: auto;
+	margin: 0;
 	padding-top: 0.35rem;
 }
 

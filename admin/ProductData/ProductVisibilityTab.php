@@ -133,7 +133,7 @@ final class ProductVisibilityTab {
 							<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?>
 						</span>
 					<?php else : ?>
-						<ul class="wc-checkboxes wccg-allowed-groups-list">
+						<ul class="wccg-allowed-groups-list">
 							<?php foreach ( $groups as $group ) : ?>
 								<li>
 									<label>
