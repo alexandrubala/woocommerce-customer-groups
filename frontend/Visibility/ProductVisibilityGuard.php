@@ -24,6 +24,13 @@ final class ProductVisibilityGuard {
 	private ProductVisibilityChecker $visibility_checker;
 
 	/**
+	 * Whether hidden product exclusions are currently being applied.
+	 *
+	 * @var bool
+	 */
+	private static bool $applying_exclusions = false;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param ProductVisibilityChecker $visibility_checker Visibility checker.
@@ -49,11 +56,11 @@ final class ProductVisibilityGuard {
 	/**
 	 * Exclude hidden products from WooCommerce product loops.
 	 *
-	 * @param \WP_Query $query     Query instance.
-	 * @param \WP_Query $wc_query  WooCommerce query instance.
+	 * @param \WP_Query   $query    Query instance.
+	 * @param \WC_Query|null $wc_query WooCommerce query instance.
 	 * @return void
 	 */
-	public function filter_product_query( \WP_Query $query, \WP_Query $wc_query ): void {
+	public function filter_product_query( \WP_Query $query, $wc_query = null ): void {
 		unset( $wc_query );
 
 		if ( ! $this->should_filter() ) {
@@ -225,7 +232,17 @@ final class ProductVisibilityGuard {
 	 * @return void
 	 */
 	private function exclude_hidden_products( \WP_Query $query ): void {
-		$hidden_ids = $this->visibility_checker->get_hidden_product_ids();
+		if ( self::$applying_exclusions ) {
+			return;
+		}
+
+		self::$applying_exclusions = true;
+
+		try {
+			$hidden_ids = $this->visibility_checker->get_hidden_product_ids();
+		} finally {
+			self::$applying_exclusions = false;
+		}
 
 		if ( empty( $hidden_ids ) ) {
 			return;
