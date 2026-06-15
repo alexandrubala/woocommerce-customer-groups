@@ -20,20 +20,39 @@
 	width: 12%;
 }
 
-.wccg-visibility-mode-options,
-.wccg-allowed-groups-list {
-	display: block;
-	margin-top: 0.25rem;
+#wccg_customer_groups_data .wc-radios,
+#wccg_customer_groups_data .wc-checkboxes {
+	margin: 0;
+	padding: 0;
+	list-style: none outside;
 }
 
-.wccg-visibility-mode-option,
-.wccg-allowed-group-option {
-	display: block;
-	margin: 0.35rem 0;
+#wccg_customer_groups_data .wc-radios li,
+#wccg_customer_groups_data .wc-checkboxes li {
+	padding: 0.15rem 0;
 }
 
-.wccg-allowed-groups-list label {
+#wccg_customer_groups_data .wc-radios label,
+#wccg_customer_groups_data .wc-checkboxes label {
+	float: none;
+	width: auto;
+	margin: 0;
+	padding: 0;
 	font-weight: 400;
+}
+
+#wccg_customer_groups_data fieldset.form-field {
+	margin: 0;
+	padding: 5px 20px 5px 162px;
+	border: 0;
+}
+
+#wccg_customer_groups_data fieldset.form-field legend {
+	float: left;
+	width: 150px;
+	padding: 0;
+	margin: 0 0 0 -150px;
+	font-weight: 600;
 }
 
 .wccg-allowed-shipping-methods-list {

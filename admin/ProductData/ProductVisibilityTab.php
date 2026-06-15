@@ -108,58 +108,51 @@ final class ProductVisibilityTab {
 		?>
 		<div id="wccg_customer_groups_data" class="panel woocommerce_options_panel hidden">
 			<div class="options_group">
-				<p class="form-field">
-					<label><?php esc_html_e( 'Visibility', 'woocommerce-customer-groups' ); ?></label>
-					<span class="wccg-visibility-mode-options">
-						<label class="wccg-visibility-mode-option">
-							<input
-								type="radio"
-								name="<?php echo esc_attr( WCCG_META_VISIBILITY_MODE ); ?>"
-								value="<?php echo esc_attr( WCCG_VISIBILITY_MODE_EVERYONE ); ?>"
-								<?php checked( $visibility_mode, WCCG_VISIBILITY_MODE_EVERYONE ); ?>
-							/>
-							<?php esc_html_e( 'Visible to everyone', 'woocommerce-customer-groups' ); ?>
-						</label>
-						<label class="wccg-visibility-mode-option">
-							<input
-								type="radio"
-								name="<?php echo esc_attr( WCCG_META_VISIBILITY_MODE ); ?>"
-								value="<?php echo esc_attr( WCCG_VISIBILITY_MODE_RESTRICTED ); ?>"
-								<?php checked( $visibility_mode, WCCG_VISIBILITY_MODE_RESTRICTED ); ?>
-							/>
-							<?php esc_html_e( 'Restrict to specific groups', 'woocommerce-customer-groups' ); ?>
-						</label>
-					</span>
-					<span class="description">
-						<?php esc_html_e( 'Control which customer groups can see and purchase this product on the storefront.', 'woocommerce-customer-groups' ); ?>
-					</span>
-				</p>
+				<?php
+				woocommerce_wp_radio(
+					array(
+						'id'          => WCCG_META_VISIBILITY_MODE,
+						'label'       => __( 'Visibility', 'woocommerce-customer-groups' ),
+						'value'       => $visibility_mode,
+						'options'     => array(
+							WCCG_VISIBILITY_MODE_EVERYONE   => __( 'Visible to everyone', 'woocommerce-customer-groups' ),
+							WCCG_VISIBILITY_MODE_RESTRICTED => __( 'Restrict to specific groups', 'woocommerce-customer-groups' ),
+						),
+						'description' => __( 'Control which customer groups can see and purchase this product on the storefront.', 'woocommerce-customer-groups' ),
+						'desc_tip'    => false,
+					)
+				);
+				?>
 			</div>
 
 			<div class="options_group wccg-allowed-groups-field"<?php echo $is_restricted ? '' : ' style="display:none;"'; ?>>
-				<p class="form-field">
-					<label><?php esc_html_e( 'Allowed Groups', 'woocommerce-customer-groups' ); ?></label>
-					<span class="wccg-allowed-groups-list">
-						<?php if ( empty( $groups ) ) : ?>
-							<em><?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?></em>
-						<?php else : ?>
+				<fieldset class="form-field <?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>_field">
+					<legend><?php esc_html_e( 'Allowed Groups', 'woocommerce-customer-groups' ); ?></legend>
+					<?php if ( empty( $groups ) ) : ?>
+						<p class="description">
+							<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?>
+						</p>
+					<?php else : ?>
+						<ul class="wc-checkboxes wccg-allowed-groups-list">
 							<?php foreach ( $groups as $group ) : ?>
-								<label class="wccg-allowed-group-option">
-									<input
-										type="checkbox"
-										name="<?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>[]"
-										value="<?php echo esc_attr( (string) $group->get_id() ); ?>"
-										<?php checked( in_array( $group->get_id(), $allowed_group_ids, true ) ); ?>
-									/>
-									<?php echo esc_html( $group->get_name() ); ?>
-								</label>
+								<li>
+									<label>
+										<input
+											type="checkbox"
+											name="<?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>[]"
+											value="<?php echo esc_attr( (string) $group->get_id() ); ?>"
+											<?php checked( in_array( $group->get_id(), $allowed_group_ids, true ) ); ?>
+										/>
+										<?php echo esc_html( $group->get_name() ); ?>
+									</label>
+								</li>
 							<?php endforeach; ?>
-						<?php endif; ?>
-					</span>
+						</ul>
+					<?php endif; ?>
 					<span class="description">
 						<?php esc_html_e( 'Only customers assigned to the selected groups will see this product. Guests and other users will not see it.', 'woocommerce-customer-groups' ); ?>
 					</span>
-				</p>
+				</fieldset>
 			</div>
 		</div>
 		<?php
