@@ -60,3 +60,19 @@
 	color: #646970;
 	font-size: 12px;
 }
+
+.wccg-allowed-payment-gateways-list {
+	margin-top: 0.25rem;
+}
+
+.wccg-allowed-payment-gateway-option {
+	display: block;
+	margin: 0.35rem 0;
+	font-weight: 400;
+}
+
+.wccg-payment-gateway-id {
+	margin-left: 0.35rem;
+	color: #646970;
+	font-size: 12px;
+}

@@ -77,16 +77,24 @@ final class CustomerGroup {
 	private array $allowed_shipping_methods;
 
 	/**
+	 * Allowed WooCommerce payment gateway IDs.
+	 *
+	 * @var string[]
+	 */
+	private array $allowed_payment_gateways;
+
+	/**
 	 * Constructor.
 	 *
-	 * @param int      $id                       Group post ID.
-	 * @param string   $name                     Group name.
-	 * @param string   $slug                     Group slug.
-	 * @param string   $status                   Post status.
-	 * @param string   $discount_type            Discount type.
-	 * @param float    $discount_value           Discount value.
-	 * @param string   $description              Optional description.
-	 * @param string[] $allowed_shipping_methods Allowed shipping method rate IDs.
+	 * @param int      $id                        Group post ID.
+	 * @param string   $name                      Group name.
+	 * @param string   $slug                      Group slug.
+	 * @param string   $status                    Post status.
+	 * @param string   $discount_type             Discount type.
+	 * @param float    $discount_value            Discount value.
+	 * @param string   $description               Optional description.
+	 * @param string[] $allowed_shipping_methods  Allowed shipping method rate IDs.
+	 * @param string[] $allowed_payment_gateways  Allowed payment gateway IDs.
 	 */
 	public function __construct(
 		int $id,
@@ -96,16 +104,18 @@ final class CustomerGroup {
 		string $discount_type,
 		float $discount_value,
 		string $description = '',
-		array $allowed_shipping_methods = array()
+		array $allowed_shipping_methods = array(),
+		array $allowed_payment_gateways = array()
 	) {
-		$this->id                       = $id;
-		$this->name                     = $name;
-		$this->slug                     = $slug;
-		$this->status                   = $status;
-		$this->discount_type            = $discount_type;
-		$this->discount_value           = $discount_value;
-		$this->description              = $description;
-		$this->allowed_shipping_methods = $allowed_shipping_methods;
+		$this->id                        = $id;
+		$this->name                      = $name;
+		$this->slug                      = $slug;
+		$this->status                    = $status;
+		$this->discount_type             = $discount_type;
+		$this->discount_value            = $discount_value;
+		$this->description               = $description;
+		$this->allowed_shipping_methods  = $allowed_shipping_methods;
+		$this->allowed_payment_gateways  = $allowed_payment_gateways;
 	}
 
 	/**
@@ -136,6 +146,19 @@ final class CustomerGroup {
 			)
 		);
 
+		$allowed_payment_gateways = get_post_meta( $post->ID, WCCG_META_ALLOWED_PAYMENT_GATEWAYS, true );
+
+		if ( ! is_array( $allowed_payment_gateways ) ) {
+			$allowed_payment_gateways = array();
+		}
+
+		$allowed_payment_gateways = array_values(
+			array_filter(
+				array_map( 'strval', $allowed_payment_gateways ),
+				static fn( string $gateway_id ): bool => '' !== $gateway_id
+			)
+		);
+
 		return new self(
 			(int) $post->ID,
 			(string) $post->post_title,
@@ -144,7 +167,8 @@ final class CustomerGroup {
 			$discount_type,
 			$discount_value,
 			$description,
-			$allowed_shipping_methods
+			$allowed_shipping_methods,
+			$allowed_payment_gateways
 		);
 	}
 
@@ -245,5 +269,23 @@ final class CustomerGroup {
 	 */
 	public function has_shipping_restrictions(): bool {
 		return ! empty( $this->allowed_shipping_methods );
+	}
+
+	/**
+	 * Get allowed WooCommerce payment gateway IDs.
+	 *
+	 * @return string[]
+	 */
+	public function get_allowed_payment_gateways(): array {
+		return $this->allowed_payment_gateways;
+	}
+
+	/**
+	 * Whether the group restricts available payment gateways.
+	 *
+	 * @return bool
+	 */
+	public function has_payment_restrictions(): bool {
+		return ! empty( $this->allowed_payment_gateways );
 	}
 }

@@ -124,4 +124,28 @@ final class Sanitizer {
 
 		return array_values( array_unique( $methods ) );
 	}
+
+	/**
+	 * Sanitize an array of WooCommerce payment gateway IDs.
+	 *
+	 * @param mixed $value Raw value.
+	 * @return string[]
+	 */
+	public static function allowed_payment_gateways( $value ): array {
+		if ( ! is_array( $value ) ) {
+			return array();
+		}
+
+		$gateways = array();
+
+		foreach ( $value as $gateway_id ) {
+			$gateway_id = sanitize_key( wp_unslash( (string) $gateway_id ) );
+
+			if ( '' !== $gateway_id ) {
+				$gateways[] = $gateway_id;
+			}
+		}
+
+		return array_values( array_unique( $gateways ) );
+	}
 }

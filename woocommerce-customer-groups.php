@@ -37,6 +37,7 @@ define( 'WCCG_META_DESCRIPTION', '_wccg_description' );
 define( 'WCCG_META_VISIBILITY_MODE', '_wccg_visibility_mode' );
 define( 'WCCG_META_ALLOWED_GROUP_IDS', '_wccg_allowed_group_ids' );
 define( 'WCCG_META_ALLOWED_SHIPPING_METHODS', '_wccg_allowed_shipping_methods' );
+define( 'WCCG_META_ALLOWED_PAYMENT_GATEWAYS', '_wccg_allowed_payment_gateways' );
 define( 'WCCG_VISIBILITY_MODE_EVERYONE', 'everyone' );
 define( 'WCCG_VISIBILITY_MODE_RESTRICTED', 'restricted' );
 

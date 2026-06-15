@@ -7,6 +7,7 @@
 
 namespace WooCommerce\CustomerGroups\Admin\MetaBoxes;
 
+use WooCommerce\CustomerGroups\Helpers\PaymentMethodHelper;
 use WooCommerce\CustomerGroups\Helpers\Sanitizer;
 use WooCommerce\CustomerGroups\Helpers\ShippingMethodHelper;
 use WooCommerce\CustomerGroups\Models\CustomerGroup;
@@ -93,6 +94,8 @@ final class GroupSettingsMetaBox {
 		$description    = $group->get_description();
 		$allowed_shipping_methods = $group->get_allowed_shipping_methods();
 		$shipping_methods_by_zone = ShippingMethodHelper::get_methods_by_zone();
+		$allowed_payment_gateways = $group->get_allowed_payment_gateways();
+		$payment_gateways         = PaymentMethodHelper::get_active_gateways();
 		?>
 		<table class="form-table wccg-group-settings" role="presentation">
 			<tbody>
@@ -184,6 +187,36 @@ final class GroupSettingsMetaBox {
 						</p>
 					</td>
 				</tr>
+				<tr>
+					<th scope="row">
+						<?php esc_html_e( 'Allowed Payment Gateways', 'woocommerce-customer-groups' ); ?>
+					</th>
+					<td>
+						<?php if ( empty( $payment_gateways ) ) : ?>
+							<p class="description">
+								<?php esc_html_e( 'No enabled payment gateways found. Configure payment methods in WooCommerce first.', 'woocommerce-customer-groups' ); ?>
+							</p>
+						<?php else : ?>
+							<div class="wccg-allowed-payment-gateways-list">
+								<?php foreach ( $payment_gateways as $gateway_id => $gateway_title ) : ?>
+									<label class="wccg-allowed-payment-gateway-option">
+										<input
+											type="checkbox"
+											name="wccg_allowed_payment_gateways[]"
+											value="<?php echo esc_attr( $gateway_id ); ?>"
+											<?php checked( in_array( $gateway_id, $allowed_payment_gateways, true ) ); ?>
+										/>
+										<?php echo esc_html( $gateway_title ); ?>
+										<code class="wccg-payment-gateway-id"><?php echo esc_html( $gateway_id ); ?></code>
+									</label>
+								<?php endforeach; ?>
+							</div>
+						<?php endif; ?>
+						<p class="description">
+							<?php esc_html_e( 'Leave all unchecked to allow every payment gateway. Select one or more gateways to restrict checkout options for customers in this group.', 'woocommerce-customer-groups' ); ?>
+						</p>
+					</td>
+				</tr>
 			</tbody>
 		</table>
 		<?php
@@ -231,11 +264,22 @@ final class GroupSettingsMetaBox {
 			$allowed_shipping_methods = array_values( array_intersect( $allowed_shipping_methods, $valid_rate_ids ) );
 		}
 
+		$allowed_payment_gateways = isset( $_POST['wccg_allowed_payment_gateways'] )
+			? Sanitizer::allowed_payment_gateways( wp_unslash( $_POST['wccg_allowed_payment_gateways'] ) )
+			: array();
+
+		$valid_gateway_ids = PaymentMethodHelper::get_available_gateway_ids();
+
+		if ( ! empty( $valid_gateway_ids ) ) {
+			$allowed_payment_gateways = array_values( array_intersect( $allowed_payment_gateways, $valid_gateway_ids ) );
+		}
+
 		$meta = array(
 			WCCG_META_DISCOUNT_TYPE             => $discount_type,
 			WCCG_META_DISCOUNT_VALUE            => $discount_value,
 			WCCG_META_DESCRIPTION               => $description,
 			WCCG_META_ALLOWED_SHIPPING_METHODS  => $allowed_shipping_methods,
+			WCCG_META_ALLOWED_PAYMENT_GATEWAYS  => $allowed_payment_gateways,
 		);
 
 		/**
@@ -250,6 +294,7 @@ final class GroupSettingsMetaBox {
 		update_post_meta( $post_id, WCCG_META_DISCOUNT_VALUE, $meta[ WCCG_META_DISCOUNT_VALUE ] );
 		update_post_meta( $post_id, WCCG_META_DESCRIPTION, $meta[ WCCG_META_DESCRIPTION ] );
 		update_post_meta( $post_id, WCCG_META_ALLOWED_SHIPPING_METHODS, $meta[ WCCG_META_ALLOWED_SHIPPING_METHODS ] );
+		update_post_meta( $post_id, WCCG_META_ALLOWED_PAYMENT_GATEWAYS, $meta[ WCCG_META_ALLOWED_PAYMENT_GATEWAYS ] );
 
 		$this->repository->clear_cache();
 
