@@ -78,7 +78,7 @@ final class RequirementsChecker {
 			$this->render_notice(
 				sprintf(
 					/* translators: %s: minimum WordPress version */
-					__( 'WooCommerce Customer Groups requires WordPress %s or higher.', 'woocommerce-customer-groups' ),
+					__( 'WooCommerce Customer Groups requires WordPress %s or higher.', WCCG_TEXT_DOMAIN ),
 					self::MIN_WP_VERSION
 				)
 			);
@@ -88,7 +88,7 @@ final class RequirementsChecker {
 			$this->render_notice(
 				sprintf(
 					/* translators: %s: minimum PHP version */
-					__( 'WooCommerce Customer Groups requires PHP %s or higher.', 'woocommerce-customer-groups' ),
+					__( 'WooCommerce Customer Groups requires PHP %s or higher.', WCCG_TEXT_DOMAIN ),
 					self::MIN_PHP_VERSION
 				)
 			);
@@ -96,13 +96,13 @@ final class RequirementsChecker {
 
 		if ( ! $this->is_woocommerce_active() ) {
 			$this->render_notice(
-				__( 'WooCommerce Customer Groups requires WooCommerce to be installed and active.', 'woocommerce-customer-groups' )
+				__( 'WooCommerce Customer Groups requires WooCommerce to be installed and active.', WCCG_TEXT_DOMAIN )
 			);
 		} elseif ( defined( 'WC_VERSION' ) && version_compare( WC_VERSION, self::MIN_WC_VERSION, '<' ) ) {
 			$this->render_notice(
 				sprintf(
 					/* translators: %s: minimum WooCommerce version */
-					__( 'WooCommerce Customer Groups requires WooCommerce %s or higher.', 'woocommerce-customer-groups' ),
+					__( 'WooCommerce Customer Groups requires WooCommerce %s or higher.', WCCG_TEXT_DOMAIN ),
 					self::MIN_WC_VERSION
 				)
 			);

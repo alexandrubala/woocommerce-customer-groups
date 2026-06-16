@@ -44,7 +44,7 @@ final class CustomerGroupRepository implements GroupRepositoryInterface {
 	 */
 	public function get_all(): array {
 		$cache_key = 'wccg_all_groups';
-		$cached    = wp_cache_get( $cache_key, 'woocommerce-customer-groups' );
+		$cached    = wp_cache_get( $cache_key, WCCG_CACHE_GROUP );
 
 		if ( false !== $cached && is_array( $cached ) ) {
 			return $cached;
@@ -68,7 +68,7 @@ final class CustomerGroupRepository implements GroupRepositoryInterface {
 			$posts
 		);
 
-		wp_cache_set( $cache_key, $groups, 'woocommerce-customer-groups' );
+		wp_cache_set( $cache_key, $groups, WCCG_CACHE_GROUP );
 
 		return $groups;
 	}
@@ -115,6 +115,6 @@ final class CustomerGroupRepository implements GroupRepositoryInterface {
 	 * @return void
 	 */
 	public function clear_cache(): void {
-		wp_cache_delete( 'wccg_all_groups', 'woocommerce-customer-groups' );
+		wp_cache_delete( 'wccg_all_groups', WCCG_CACHE_GROUP );
 	}
 }

@@ -89,7 +89,7 @@ final class GroupSettingsMetaBox {
 	public function register_meta_box(): void {
 		add_meta_box(
 			'wccg-group-settings',
-			__( 'Group Settings', 'woocommerce-customer-groups' ),
+			__( 'Group Settings', WCCG_TEXT_DOMAIN ),
 			array( $this, 'render_meta_box' ),
 			WCCG_POST_TYPE,
 			'normal',
@@ -120,25 +120,25 @@ final class GroupSettingsMetaBox {
 			<tbody>
 				<tr>
 					<th scope="row">
-						<label for="wccg_discount_type"><?php esc_html_e( 'Discount Type', 'woocommerce-customer-groups' ); ?></label>
+						<label for="wccg_discount_type"><?php esc_html_e( 'Discount Type', WCCG_TEXT_DOMAIN ); ?></label>
 					</th>
 					<td>
 						<select name="wccg_discount_type" id="wccg_discount_type">
 							<option value="<?php echo esc_attr( CustomerGroup::DISCOUNT_TYPE_PERCENTAGE ); ?>" <?php selected( $discount_type, CustomerGroup::DISCOUNT_TYPE_PERCENTAGE ); ?>>
-								<?php esc_html_e( 'Percentage', 'woocommerce-customer-groups' ); ?>
+								<?php esc_html_e( 'Percentage', WCCG_TEXT_DOMAIN ); ?>
 							</option>
 							<option value="<?php echo esc_attr( CustomerGroup::DISCOUNT_TYPE_FIXED ); ?>" <?php selected( $discount_type, CustomerGroup::DISCOUNT_TYPE_FIXED ); ?>>
-								<?php esc_html_e( 'Fixed amount', 'woocommerce-customer-groups' ); ?>
+								<?php esc_html_e( 'Fixed amount', WCCG_TEXT_DOMAIN ); ?>
 							</option>
 						</select>
 						<p class="description">
-							<?php esc_html_e( 'Choose how the group discount is calculated.', 'woocommerce-customer-groups' ); ?>
+							<?php esc_html_e( 'Choose how the group discount is calculated.', WCCG_TEXT_DOMAIN ); ?>
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
-						<label for="wccg_discount_value"><?php esc_html_e( 'Discount Value', 'woocommerce-customer-groups' ); ?></label>
+						<label for="wccg_discount_value"><?php esc_html_e( 'Discount Value', WCCG_TEXT_DOMAIN ); ?></label>
 					</th>
 					<td>
 						<input
@@ -151,13 +151,13 @@ final class GroupSettingsMetaBox {
 							class="regular-text"
 						/>
 						<p class="description">
-							<?php esc_html_e( 'For percentage discounts, enter a value between 0 and 100. For fixed discounts, enter the amount to subtract from the product price.', 'woocommerce-customer-groups' ); ?>
+							<?php esc_html_e( 'For percentage discounts, enter a value between 0 and 100. For fixed discounts, enter the amount to subtract from the product price.', WCCG_TEXT_DOMAIN ); ?>
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
-						<label for="wccg_description"><?php esc_html_e( 'Description', 'woocommerce-customer-groups' ); ?></label>
+						<label for="wccg_description"><?php esc_html_e( 'Description', WCCG_TEXT_DOMAIN ); ?></label>
 					</th>
 					<td>
 						<textarea
@@ -167,18 +167,18 @@ final class GroupSettingsMetaBox {
 							class="large-text"
 						><?php echo esc_textarea( $description ); ?></textarea>
 						<p class="description">
-							<?php esc_html_e( 'Optional internal description for store administrators.', 'woocommerce-customer-groups' ); ?>
+							<?php esc_html_e( 'Optional internal description for store administrators.', WCCG_TEXT_DOMAIN ); ?>
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
-						<?php esc_html_e( 'Allowed Shipping Methods', 'woocommerce-customer-groups' ); ?>
+						<?php esc_html_e( 'Allowed Shipping Methods', WCCG_TEXT_DOMAIN ); ?>
 					</th>
 					<td>
 						<?php if ( empty( $shipping_methods_by_zone ) ) : ?>
 							<p class="description">
-								<?php esc_html_e( 'No enabled shipping methods found. Configure shipping zones in WooCommerce first.', 'woocommerce-customer-groups' ); ?>
+								<?php esc_html_e( 'No enabled shipping methods found. Configure shipping zones in WooCommerce first.', WCCG_TEXT_DOMAIN ); ?>
 							</p>
 						<?php else : ?>
 							<div class="wccg-allowed-shipping-methods-list">
@@ -202,18 +202,18 @@ final class GroupSettingsMetaBox {
 							</div>
 						<?php endif; ?>
 						<p class="description">
-							<?php esc_html_e( 'Leave all unchecked to allow every shipping method. Select one or more methods to restrict checkout options for customers in this group.', 'woocommerce-customer-groups' ); ?>
+							<?php esc_html_e( 'Leave all unchecked to allow every shipping method. Select one or more methods to restrict checkout options for customers in this group.', WCCG_TEXT_DOMAIN ); ?>
 						</p>
 					</td>
 				</tr>
 				<tr>
 					<th scope="row">
-						<?php esc_html_e( 'Allowed Payment Gateways', 'woocommerce-customer-groups' ); ?>
+						<?php esc_html_e( 'Allowed Payment Gateways', WCCG_TEXT_DOMAIN ); ?>
 					</th>
 					<td>
 						<?php if ( empty( $payment_gateways ) ) : ?>
 							<p class="description">
-								<?php esc_html_e( 'No enabled payment gateways found. Configure payment methods in WooCommerce first.', 'woocommerce-customer-groups' ); ?>
+								<?php esc_html_e( 'No enabled payment gateways found. Configure payment methods in WooCommerce first.', WCCG_TEXT_DOMAIN ); ?>
 							</p>
 						<?php else : ?>
 							<div class="wccg-allowed-payment-gateways-list">
@@ -232,7 +232,7 @@ final class GroupSettingsMetaBox {
 							</div>
 						<?php endif; ?>
 						<p class="description">
-							<?php esc_html_e( 'Leave all unchecked to allow every payment gateway. Select one or more gateways to restrict checkout options for customers in this group.', 'woocommerce-customer-groups' ); ?>
+							<?php esc_html_e( 'Leave all unchecked to allow every payment gateway. Select one or more gateways to restrict checkout options for customers in this group.', WCCG_TEXT_DOMAIN ); ?>
 						</p>
 					</td>
 				</tr>
@@ -256,6 +256,10 @@ final class GroupSettingsMetaBox {
 		}
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) || WCCG_POST_TYPE !== get_post_type( $post_id ) ) {
 			return;
 		}
 

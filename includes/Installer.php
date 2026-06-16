@@ -28,8 +28,8 @@ final class Installer {
 			deactivate_plugins( WCCG_BASENAME );
 
 			wp_die(
-				esc_html__( 'WooCommerce Customer Groups requires WordPress 6.0+, PHP 8.0+, and an active WooCommerce installation.', 'woocommerce-customer-groups' ),
-				esc_html__( 'Plugin Activation Error', 'woocommerce-customer-groups' ),
+				esc_html__( 'WooCommerce Customer Groups requires WordPress 6.0+, PHP 8.0+, and an active WooCommerce installation.', WCCG_TEXT_DOMAIN ),
+				esc_html__( 'Plugin Activation Error', WCCG_TEXT_DOMAIN ),
 				array( 'back_link' => true )
 			);
 		}

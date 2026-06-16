@@ -135,7 +135,7 @@ final class ProductVisibilityGuard {
 		}
 
 		wc_add_notice(
-			__( 'Sorry, this product is not available to your customer group.', 'woocommerce-customer-groups' ),
+			__( 'Sorry, this product is not available to your customer group.', WCCG_TEXT_DOMAIN ),
 			'error'
 		);
 
@@ -177,7 +177,7 @@ final class ProductVisibilityGuard {
 		}
 
 		wc_add_notice(
-			__( 'Sorry, this product is not available to your customer group.', 'woocommerce-customer-groups' ),
+			__( 'Sorry, this product is not available to your customer group.', WCCG_TEXT_DOMAIN ),
 			'error'
 		);
 

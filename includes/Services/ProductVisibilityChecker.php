@@ -113,7 +113,7 @@ final class ProductVisibilityChecker {
 	 * @return void
 	 */
 	public static function clear_cache(): void {
-		wp_cache_delete( 'wccg_restricted_products_map', 'woocommerce-customer-groups' );
+		wp_cache_delete( 'wccg_restricted_products_map', WCCG_CACHE_GROUP );
 	}
 
 	/**
@@ -155,7 +155,7 @@ final class ProductVisibilityChecker {
 	 */
 	private function get_restricted_products_map(): array {
 		$cache_key = 'wccg_restricted_products_map';
-		$cached    = wp_cache_get( $cache_key, 'woocommerce-customer-groups' );
+		$cached    = wp_cache_get( $cache_key, WCCG_CACHE_GROUP );
 
 		if ( is_array( $cached ) ) {
 			return $cached;
@@ -188,7 +188,7 @@ final class ProductVisibilityChecker {
 			$map[ $product_id ] = is_array( $allowed ) ? array_map( 'absint', $allowed ) : array();
 		}
 
-		wp_cache_set( $cache_key, $map, 'woocommerce-customer-groups' );
+		wp_cache_set( $cache_key, $map, WCCG_CACHE_GROUP );
 
 		return $map;
 	}

@@ -84,6 +84,25 @@ final class Capabilities {
 	}
 
 	/**
+	 * Remove capabilities added during plugin activation.
+	 *
+	 * @return void
+	 */
+	public static function unregister(): void {
+		foreach ( self::ROLES as $role_name ) {
+			$role = get_role( $role_name );
+
+			if ( ! $role ) {
+				continue;
+			}
+
+			foreach ( self::GROUP_CAPS as $capability ) {
+				$role->remove_cap( $capability );
+			}
+		}
+	}
+
+	/**
 	 * Whether the current user can manage customer groups.
 	 *
 	 * @return bool

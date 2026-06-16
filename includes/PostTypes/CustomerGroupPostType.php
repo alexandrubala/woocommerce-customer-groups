@@ -34,21 +34,21 @@ final class CustomerGroupPostType {
 		}
 
 		$labels = array(
-			'name'                  => __( 'Customer Groups', 'woocommerce-customer-groups' ),
-			'singular_name'         => __( 'Customer Group', 'woocommerce-customer-groups' ),
-			'menu_name'             => __( 'Customer Groups', 'woocommerce-customer-groups' ),
-			'name_admin_bar'        => __( 'Customer Group', 'woocommerce-customer-groups' ),
-			'add_new'               => __( 'Add New', 'woocommerce-customer-groups' ),
-			'add_new_item'          => __( 'Add New Customer Group', 'woocommerce-customer-groups' ),
-			'edit_item'             => __( 'Edit Customer Group', 'woocommerce-customer-groups' ),
-			'new_item'              => __( 'New Customer Group', 'woocommerce-customer-groups' ),
-			'view_item'             => __( 'View Customer Group', 'woocommerce-customer-groups' ),
-			'search_items'          => __( 'Search Customer Groups', 'woocommerce-customer-groups' ),
-			'not_found'             => __( 'No customer groups found.', 'woocommerce-customer-groups' ),
-			'not_found_in_trash'    => __( 'No customer groups found in Trash.', 'woocommerce-customer-groups' ),
-			'all_items'             => __( 'All Customer Groups', 'woocommerce-customer-groups' ),
-			'item_published'        => __( 'Customer group published.', 'woocommerce-customer-groups' ),
-			'item_updated'          => __( 'Customer group updated.', 'woocommerce-customer-groups' ),
+			'name'                  => __( 'Customer Groups', WCCG_TEXT_DOMAIN ),
+			'singular_name'         => __( 'Customer Group', WCCG_TEXT_DOMAIN ),
+			'menu_name'             => __( 'Customer Groups', WCCG_TEXT_DOMAIN ),
+			'name_admin_bar'        => __( 'Customer Group', WCCG_TEXT_DOMAIN ),
+			'add_new'               => __( 'Add New', WCCG_TEXT_DOMAIN ),
+			'add_new_item'          => __( 'Add New Customer Group', WCCG_TEXT_DOMAIN ),
+			'edit_item'             => __( 'Edit Customer Group', WCCG_TEXT_DOMAIN ),
+			'new_item'              => __( 'New Customer Group', WCCG_TEXT_DOMAIN ),
+			'view_item'             => __( 'View Customer Group', WCCG_TEXT_DOMAIN ),
+			'search_items'          => __( 'Search Customer Groups', WCCG_TEXT_DOMAIN ),
+			'not_found'             => __( 'No customer groups found.', WCCG_TEXT_DOMAIN ),
+			'not_found_in_trash'    => __( 'No customer groups found in Trash.', WCCG_TEXT_DOMAIN ),
+			'all_items'             => __( 'All Customer Groups', WCCG_TEXT_DOMAIN ),
+			'item_published'        => __( 'Customer group published.', WCCG_TEXT_DOMAIN ),
+			'item_updated'          => __( 'Customer group updated.', WCCG_TEXT_DOMAIN ),
 		);
 
 		register_post_type(
@@ -87,6 +87,6 @@ final class CustomerGroupPostType {
 			return $title;
 		}
 
-		return __( 'Enter group name (e.g. VIP, Reseller, Distributor)', 'woocommerce-customer-groups' );
+		return __( 'Enter group name (e.g. VIP, Reseller, Distributor)', WCCG_TEXT_DOMAIN );
 	}
 }

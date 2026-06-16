@@ -8,7 +8,7 @@
  * Plugin Name:       WooCommerce Customer Groups
  * Plugin URI:        https://github.com/alexandrubala/woocommerce-customer-groups
  * Description:       Customer segmentation and role-based pricing for WooCommerce stores.
- * Version:           1.0.6
+ * Version:           1.0.7
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            alexandrubala
@@ -23,12 +23,13 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WCCG_VERSION', '1.0.6' );
+define( 'WCCG_VERSION', '1.0.7' );
 define( 'WCCG_FILE', __FILE__ );
 define( 'WCCG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCCG_URL', plugin_dir_url( __FILE__ ) );
 define( 'WCCG_BASENAME', plugin_basename( __FILE__ ) );
 define( 'WCCG_TEXT_DOMAIN', 'woocommerce-customer-groups' );
+define( 'WCCG_CACHE_GROUP', 'wccg' );
 define( 'WCCG_POST_TYPE', 'wc_customer_group' );
 define( 'WCCG_USER_META_GROUP_ID', '_wccg_group_id' );
 define( 'WCCG_META_DISCOUNT_TYPE', '_wccg_discount_type' );
@@ -99,8 +100,8 @@ function wccg_register_admin_menu(): void {
 	}
 
 	add_menu_page(
-		__( 'Customer Groups', 'woocommerce-customer-groups' ),
-		__( 'Customer Groups', 'woocommerce-customer-groups' ),
+		__( 'Customer Groups', WCCG_TEXT_DOMAIN ),
+		__( 'Customer Groups', WCCG_TEXT_DOMAIN ),
 		WooCommerce\CustomerGroups\Capabilities::MANAGE_GROUPS,
 		$menu_slug,
 		'',
@@ -132,14 +133,16 @@ function wccg_top_level_menu_exists( string $menu_slug ): bool {
 	return false;
 }
 
-add_action(
-	'plugins_loaded',
-	static function (): void {
-		if ( class_exists( 'WooCommerce\CustomerGroups\Capabilities' ) ) {
-			WooCommerce\CustomerGroups\Capabilities::register();
-		}
+/**
+ * Bootstrap plugin services after all plugins are loaded.
+ *
+ * @return void
+ */
+function wccg_bootstrap_plugin(): void {
+	if ( class_exists( 'WooCommerce\CustomerGroups\Capabilities' ) ) {
+		WooCommerce\CustomerGroups\Capabilities::register();
+	}
 
-		WooCommerce\CustomerGroups\Plugin::instance()->init();
-	},
-	20
-);
+	WooCommerce\CustomerGroups\Plugin::instance()->init();
+}
+add_action( 'plugins_loaded', 'wccg_bootstrap_plugin', 20 );

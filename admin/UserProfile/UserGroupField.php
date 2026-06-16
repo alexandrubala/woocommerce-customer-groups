@@ -63,16 +63,16 @@ final class UserGroupField {
 
 		wp_nonce_field( 'wccg_save_user_group', 'wccg_user_group_nonce' );
 		?>
-		<h2><?php esc_html_e( 'Customer Group', 'woocommerce-customer-groups' ); ?></h2>
+		<h2><?php esc_html_e( 'Customer Group', WCCG_TEXT_DOMAIN ); ?></h2>
 		<table class="form-table wccg-user-group-field" role="presentation">
 			<tbody>
 				<tr>
 					<th scope="row">
-						<label for="wccg_group_id"><?php esc_html_e( 'Assigned Group', 'woocommerce-customer-groups' ); ?></label>
+						<label for="wccg_group_id"><?php esc_html_e( 'Assigned Group', WCCG_TEXT_DOMAIN ); ?></label>
 					</th>
 					<td>
 						<select name="wccg_group_id" id="wccg_group_id">
-							<option value="0"><?php esc_html_e( '— No group —', 'woocommerce-customer-groups' ); ?></option>
+							<option value="0"><?php esc_html_e( '— No group —', WCCG_TEXT_DOMAIN ); ?></option>
 							<?php foreach ( $groups as $group ) : ?>
 								<option value="<?php echo esc_attr( (string) $group->get_id() ); ?>" <?php selected( $selected_group, $group->get_id() ); ?>>
 									<?php echo esc_html( $group->get_name() ); ?>
@@ -80,7 +80,7 @@ final class UserGroupField {
 							<?php endforeach; ?>
 						</select>
 						<p class="description">
-							<?php esc_html_e( 'Assign this customer to a group to apply group-specific pricing and benefits.', 'woocommerce-customer-groups' ); ?>
+							<?php esc_html_e( 'Assign this customer to a group to apply group-specific pricing and benefits.', WCCG_TEXT_DOMAIN ); ?>
 						</p>
 					</td>
 				</tr>
@@ -134,7 +134,7 @@ final class UserGroupField {
 	 * @return array<string, string>
 	 */
 	public function register_users_column( array $columns ): array {
-		$columns['wccg_customer_group'] = __( 'Customer Group', 'woocommerce-customer-groups' );
+		$columns['wccg_customer_group'] = __( 'Customer Group', WCCG_TEXT_DOMAIN );
 
 		return $columns;
 	}
@@ -155,13 +155,13 @@ final class UserGroupField {
 		$group_id = (int) get_user_meta( $user_id, WCCG_USER_META_GROUP_ID, true );
 
 		if ( $group_id <= 0 ) {
-			return esc_html__( '—', 'woocommerce-customer-groups' );
+			return esc_html__( '—', WCCG_TEXT_DOMAIN );
 		}
 
 		$group = $this->repository->find_by_id( $group_id );
 
 		if ( null === $group ) {
-			return esc_html__( '—', 'woocommerce-customer-groups' );
+			return esc_html__( '—', WCCG_TEXT_DOMAIN );
 		}
 
 		return esc_html( $group->get_name() );

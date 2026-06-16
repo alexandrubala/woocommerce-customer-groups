@@ -23,7 +23,7 @@ final class Sanitizer {
 	 * @return string
 	 */
 	public static function discount_type( $value ): string {
-		$value = sanitize_key( (string) $value );
+		$value = sanitize_key( (string) wp_unslash( $value ) );
 
 		if ( CustomerGroup::DISCOUNT_TYPE_FIXED === $value ) {
 			return CustomerGroup::DISCOUNT_TYPE_FIXED;
@@ -40,7 +40,7 @@ final class Sanitizer {
 	 * @return float
 	 */
 	public static function discount_value( $value, string $type ): float {
-		$value = (float) wc_format_decimal( wp_unslash( (string) $value ) );
+		$value = (float) wc_format_decimal( (string) wp_unslash( $value ) );
 
 		if ( CustomerGroup::DISCOUNT_TYPE_PERCENTAGE === $type ) {
 			return max( 0.0, min( 100.0, $value ) );
@@ -56,7 +56,7 @@ final class Sanitizer {
 	 * @return int
 	 */
 	public static function group_id( $value ): int {
-		return max( 0, absint( $value ) );
+		return max( 0, absint( wp_unslash( $value ) ) );
 	}
 
 	/**
@@ -66,7 +66,7 @@ final class Sanitizer {
 	 * @return string
 	 */
 	public static function description( $value ): string {
-		return sanitize_textarea_field( wp_unslash( (string) $value ) );
+		return sanitize_textarea_field( (string) wp_unslash( $value ) );
 	}
 
 	/**
@@ -76,7 +76,7 @@ final class Sanitizer {
 	 * @return string
 	 */
 	public static function visibility_mode( $value ): string {
-		$value = sanitize_key( (string) $value );
+		$value = sanitize_key( (string) wp_unslash( $value ) );
 
 		if ( WCCG_VISIBILITY_MODE_RESTRICTED === $value ) {
 			return WCCG_VISIBILITY_MODE_RESTRICTED;
@@ -96,7 +96,8 @@ final class Sanitizer {
 			return array();
 		}
 
-		$ids = array_map( 'absint', $value );
+		$value = wp_unslash( $value );
+		$ids   = array_map( 'absint', $value );
 
 		return array_values( array_unique( array_filter( $ids ) ) );
 	}
@@ -112,10 +113,11 @@ final class Sanitizer {
 			return array();
 		}
 
+		$value = wp_unslash( $value );
 		$methods = array();
 
 		foreach ( $value as $method_id ) {
-			$method_id = sanitize_text_field( wp_unslash( (string) $method_id ) );
+			$method_id = sanitize_text_field( (string) $method_id );
 
 			if ( preg_match( '/^[a-z0-9_]+(?::\d+)?$/', $method_id ) ) {
 				$methods[] = $method_id;
@@ -136,10 +138,11 @@ final class Sanitizer {
 			return array();
 		}
 
+		$value = wp_unslash( $value );
 		$gateways = array();
 
 		foreach ( $value as $gateway_id ) {
-			$gateway_id = sanitize_key( wp_unslash( (string) $gateway_id ) );
+			$gateway_id = sanitize_key( (string) $gateway_id );
 
 			if ( '' !== $gateway_id ) {
 				$gateways[] = $gateway_id;

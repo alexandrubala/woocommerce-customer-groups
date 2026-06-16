@@ -39,7 +39,7 @@ final class ShippingMethodHelper {
 			$zone_name = $zone->get_zone_name();
 
 			if ( '' === $zone_name ) {
-				$zone_name = __( 'Locations not covered by your other zones', 'woocommerce-customer-groups' );
+				$zone_name = __( 'Locations not covered by your other zones', WCCG_TEXT_DOMAIN );
 			}
 
 			foreach ( $zone->get_shipping_methods( true ) as $instance ) {

@@ -69,7 +69,7 @@ final class ProductVisibilityTab {
 	 */
 	public function register_tab( array $tabs ): array {
 		$tabs['wccg_customer_groups'] = array(
-			'label'    => __( 'Customer Groups', 'woocommerce-customer-groups' ),
+			'label'    => __( 'Customer Groups', WCCG_TEXT_DOMAIN ),
 			'target'   => 'wccg_customer_groups_data',
 			'class'    => array( 'show_if_simple', 'show_if_variable', 'show_if_grouped', 'show_if_external' ),
 			'priority' => 80,
@@ -112,26 +112,26 @@ final class ProductVisibilityTab {
 				woocommerce_wp_radio(
 					array(
 						'id'          => WCCG_META_VISIBILITY_MODE,
-						'label'       => __( 'Visibility', 'woocommerce-customer-groups' ),
+						'label'       => __( 'Visibility', WCCG_TEXT_DOMAIN ),
 						'value'       => $visibility_mode,
 						'options'     => array(
-							WCCG_VISIBILITY_MODE_EVERYONE   => __( 'Visible to everyone', 'woocommerce-customer-groups' ),
-							WCCG_VISIBILITY_MODE_RESTRICTED => __( 'Restrict to specific groups', 'woocommerce-customer-groups' ),
+							WCCG_VISIBILITY_MODE_EVERYONE   => __( 'Visible to everyone', WCCG_TEXT_DOMAIN ),
+							WCCG_VISIBILITY_MODE_RESTRICTED => __( 'Restrict to specific groups', WCCG_TEXT_DOMAIN ),
 						),
-						'description' => __( 'Control which customer groups can see and purchase this product on the storefront.', 'woocommerce-customer-groups' ),
+						'description' => __( 'Control which customer groups can see and purchase this product on the storefront.', WCCG_TEXT_DOMAIN ),
 						'desc_tip'    => false,
 					)
 				);
 				?>
 			</div>
 
-			<div class="options_group wccg-allowed-groups-field"<?php echo $is_restricted ? '' : ' style="display:none;"'; ?>>
+			<div class="options_group wccg-allowed-groups-field"<?php echo $is_restricted ? '' : ' style="' . esc_attr( 'display:none;' ) . '"'; ?>>
 				<p class="form-field wccg-allowed-groups-form-field <?php echo esc_attr( WCCG_META_ALLOWED_GROUP_IDS ); ?>_field">
-					<label><?php esc_html_e( 'Allowed Groups', 'woocommerce-customer-groups' ); ?></label>
+					<label><?php esc_html_e( 'Allowed Groups', WCCG_TEXT_DOMAIN ); ?></label>
 					<span class="wccg-allowed-groups-wrap">
 						<?php if ( empty( $groups ) ) : ?>
 							<em class="wccg-no-groups-notice">
-								<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', 'woocommerce-customer-groups' ); ?>
+								<?php esc_html_e( 'No active customer groups found. Create a group first to restrict visibility.', WCCG_TEXT_DOMAIN ); ?>
 							</em>
 						<?php else : ?>
 							<?php foreach ( $groups as $group ) : ?>
@@ -148,7 +148,7 @@ final class ProductVisibilityTab {
 						<?php endif; ?>
 					</span>
 					<span class="description">
-						<?php esc_html_e( 'Only customers assigned to the selected groups will see this product. Guests and other users will not see it.', 'woocommerce-customer-groups' ); ?>
+						<?php esc_html_e( 'Only customers assigned to the selected groups will see this product. Guests and other users will not see it.', WCCG_TEXT_DOMAIN ); ?>
 					</span>
 				</p>
 			</div>
@@ -165,6 +165,18 @@ final class ProductVisibilityTab {
 	 */
 	public function save_product_meta( int $post_id, \WP_Post $post ): void {
 		unset( $post );
+
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+
+		if ( wp_is_post_revision( $post_id ) || 'product' !== get_post_type( $post_id ) ) {
+			return;
+		}
+
+		if ( ! isset( $_POST['woocommerce_meta_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['woocommerce_meta_nonce'] ) ), 'woocommerce_save_data' ) ) {
+			return;
+		}
 
 		if ( ! current_user_can( 'edit_product', $post_id ) ) {
 			return;

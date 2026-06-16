@@ -113,9 +113,9 @@ final class ProductPriceDisplay {
 
 		$html = sprintf(
 			'<span class="wccg-price"><del><span class="wccg-price-regular">%1$s %2$s</span></del> <ins><span class="wccg-price-discounted">%3$s %4$s</span></ins></span>',
-			esc_html__( 'Regular:', 'woocommerce-customer-groups' ),
+			esc_html__( 'Regular:', WCCG_TEXT_DOMAIN ),
 			wp_kses_post( wc_price( $regular_price ) ),
-			esc_html__( 'Your price:', 'woocommerce-customer-groups' ),
+			esc_html__( 'Your price:', WCCG_TEXT_DOMAIN ),
 			wp_kses_post( wc_price( $discounted_price ) )
 		);
 
@@ -158,9 +158,9 @@ final class ProductPriceDisplay {
 		if ( $min_regular === $max_regular && $min_discounted === $max_discounted ) {
 			$html = sprintf(
 				'<span class="wccg-price"><del><span class="wccg-price-regular">%1$s %2$s</span></del> <ins><span class="wccg-price-discounted">%3$s %4$s</span></ins></span>',
-				esc_html__( 'Regular:', 'woocommerce-customer-groups' ),
+				esc_html__( 'Regular:', WCCG_TEXT_DOMAIN ),
 				wp_kses_post( wc_price( $min_regular ) ),
-				esc_html__( 'Your price:', 'woocommerce-customer-groups' ),
+				esc_html__( 'Your price:', WCCG_TEXT_DOMAIN ),
 				wp_kses_post( wc_price( $min_discounted ) )
 			);
 
@@ -181,9 +181,9 @@ final class ProductPriceDisplay {
 
 		$html = sprintf(
 			'<span class="wccg-price"><del><span class="wccg-price-regular">%1$s %2$s</span></del> <ins><span class="wccg-price-discounted">%3$s %4$s</span></ins></span>',
-			esc_html__( 'Regular:', 'woocommerce-customer-groups' ),
+			esc_html__( 'Regular:', WCCG_TEXT_DOMAIN ),
 			wp_kses_post( $regular_range ),
-			esc_html__( 'Your price:', 'woocommerce-customer-groups' ),
+			esc_html__( 'Your price:', WCCG_TEXT_DOMAIN ),
 			wp_kses_post( $price_range )
 		);
 

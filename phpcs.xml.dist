@@ -3,6 +3,7 @@
 	<description>WordPress Coding Standards for WooCommerce Customer Groups.</description>
 
 	<file>./woocommerce-customer-groups.php</file>
+	<file>./uninstall.php</file>
 	<file>./includes</file>
 	<file>./admin</file>
 	<file>./frontend</file>

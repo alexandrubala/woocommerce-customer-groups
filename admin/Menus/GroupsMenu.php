@@ -39,7 +39,7 @@ final class GroupsMenu {
 			array(
 				'id'        => 'wccg-customer-groups',
 				'screen_id' => 'edit-' . WCCG_POST_TYPE,
-				'title'     => __( 'Customer Groups', 'woocommerce-customer-groups' ),
+				'title'     => __( 'Customer Groups', WCCG_TEXT_DOMAIN ),
 				'path'      => $list_path,
 			)
 		);
@@ -49,7 +49,7 @@ final class GroupsMenu {
 				'id'        => 'wccg-customer-groups-add',
 				'parent'    => 'wccg-customer-groups',
 				'screen_id' => WCCG_POST_TYPE . '-add',
-				'title'     => __( 'Add New Customer Group', 'woocommerce-customer-groups' ),
+				'title'     => __( 'Add New Customer Group', WCCG_TEXT_DOMAIN ),
 			)
 		);
 
@@ -58,7 +58,7 @@ final class GroupsMenu {
 				'id'        => 'wccg-edit-customer-group',
 				'parent'    => 'wccg-customer-groups',
 				'screen_id' => WCCG_POST_TYPE,
-				'title'     => __( 'Edit Customer Group', 'woocommerce-customer-groups' ),
+				'title'     => __( 'Edit Customer Group', WCCG_TEXT_DOMAIN ),
 			)
 		);
 	}

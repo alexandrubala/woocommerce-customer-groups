@@ -4,7 +4,23 @@ Customer segmentation, role-based pricing, and checkout restrictions for WooComm
 
 Create customer groups (VIP, Reseller, Distributor, Partner), assign them to users, and configure group-level discounts, product visibility, shipping methods, and payment gateways. Built with PHP 8.0+, OOP architecture, and WordPress Coding Standards.
 
-**Current version:** 1.0.6
+**Current version:** 1.0.7
+
+## Changelog
+
+### 1.0.7
+
+- Added `uninstall.php` to remove customer group posts, product meta, user meta, and role capabilities on plugin deletion
+- Hardened admin saves: WooCommerce product nonce verification, autosave/revision guards, and post-type checks
+- Standardized i18n via the `WCCG_TEXT_DOMAIN` constant across all translatable strings
+- Improved input sanitization (`wp_unslash()` centralized in `Sanitizer`)
+- Fixed unescaped attribute output in the product visibility panel
+- Replaced anonymous `plugins_loaded` closure with prefixed `wccg_bootstrap_plugin()` function
+- Added `WCCG_CACHE_GROUP` constant for object-cache namespacing
+
+### 1.0.6
+
+- Previous stable release
 
 ## Requirements
 

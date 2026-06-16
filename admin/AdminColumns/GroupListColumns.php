@@ -57,9 +57,9 @@ final class GroupListColumns {
 			$new_columns[ $key ] = $label;
 
 			if ( 'title' === $key ) {
-				$new_columns['wccg_discount_type']  = __( 'Discount Type', 'woocommerce-customer-groups' );
-				$new_columns['wccg_discount_value'] = __( 'Discount', 'woocommerce-customer-groups' );
-				$new_columns['wccg_users_count']    = __( 'Users', 'woocommerce-customer-groups' );
+				$new_columns['wccg_discount_type']  = __( 'Discount Type', WCCG_TEXT_DOMAIN );
+				$new_columns['wccg_discount_value'] = __( 'Discount', WCCG_TEXT_DOMAIN );
+				$new_columns['wccg_users_count']    = __( 'Users', WCCG_TEXT_DOMAIN );
 			}
 		}
 
