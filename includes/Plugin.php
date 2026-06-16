@@ -72,16 +72,7 @@ final class Plugin {
 
 		$this->initialized = true;
 
-		load_plugin_textdomain(
-			WCCG_TEXT_DOMAIN,
-			false,
-			dirname( WCCG_BASENAME ) . '/languages'
-		);
-
 		add_action( 'before_woocommerce_init', array( $this, 'declare_woocommerce_compatibility' ) );
-
-		Capabilities::register();
-		$this->container->get( AdminServiceProvider::class )->register();
 
 		$requirements = $this->container->get( RequirementsChecker::class );
 
@@ -90,6 +81,8 @@ final class Plugin {
 			return;
 		}
 
+		Capabilities::register();
+		$this->container->get( AdminServiceProvider::class )->register();
 		$this->container->get( FrontendServiceProvider::class )->register();
 	}
 

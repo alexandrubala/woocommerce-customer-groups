@@ -8,7 +8,7 @@
  * Plugin Name:       WooCommerce Customer Groups
  * Plugin URI:        https://github.com/alexandrubala/woocommerce-customer-groups
  * Description:       Customer segmentation and role-based pricing for WooCommerce stores.
- * Version:           1.0.7
+ * Version:           1.0.6
  * Requires at least: 6.0
  * Requires PHP:      8.0
  * Author:            alexandrubala
@@ -23,7 +23,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'WCCG_VERSION', '1.0.7' );
+define( 'WCCG_VERSION', '1.0.6' );
 define( 'WCCG_FILE', __FILE__ );
 define( 'WCCG_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCCG_URL', plugin_dir_url( __FILE__ ) );
@@ -56,11 +56,55 @@ register_activation_hook( WCCG_FILE, array( 'WooCommerce\CustomerGroups\Installe
 register_deactivation_hook( WCCG_FILE, array( 'WooCommerce\CustomerGroups\Deactivator', 'deactivate' ) );
 
 /**
+ * Load plugin translations.
+ *
+ * @return void
+ */
+function wccg_load_textdomain(): void {
+	load_plugin_textdomain(
+		WCCG_TEXT_DOMAIN,
+		false,
+		dirname( WCCG_BASENAME ) . '/languages'
+	);
+}
+add_action( 'plugins_loaded', 'wccg_load_textdomain', 5 );
+
+/**
+ * Check whether runtime requirements are met.
+ *
+ * Registers admin notices once when requirements fail.
+ *
+ * @return bool
+ */
+function wccg_dependencies_met(): bool {
+	static $result        = null;
+	static $notices_added = false;
+
+	if ( null !== $result ) {
+		return $result;
+	}
+
+	$checker = new WooCommerce\CustomerGroups\Services\RequirementsChecker();
+	$result  = $checker->passes( false );
+
+	if ( ! $result && ! $notices_added ) {
+		$checker->register_admin_notices();
+		$notices_added = true;
+	}
+
+	return $result;
+}
+
+/**
  * Register the customer group post type as early as possible.
  *
  * @return void
  */
 function wccg_register_post_type(): void {
+	if ( ! wccg_dependencies_met() ) {
+		return;
+	}
+
 	if ( ! class_exists( 'WooCommerce\CustomerGroups\PostTypes\CustomerGroupPostType' ) ) {
 		return;
 	}
@@ -75,7 +119,7 @@ add_action( 'init', 'wccg_register_post_type', 0 );
  * @return void
  */
 function wccg_register_admin_menu(): void {
-	if ( ! is_admin() ) {
+	if ( ! is_admin() || ! wccg_dependencies_met() ) {
 		return;
 	}
 
@@ -139,8 +183,8 @@ function wccg_top_level_menu_exists( string $menu_slug ): bool {
  * @return void
  */
 function wccg_bootstrap_plugin(): void {
-	if ( class_exists( 'WooCommerce\CustomerGroups\Capabilities' ) ) {
-		WooCommerce\CustomerGroups\Capabilities::register();
+	if ( ! wccg_dependencies_met() ) {
+		return;
 	}
 
 	WooCommerce\CustomerGroups\Plugin::instance()->init();
